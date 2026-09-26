@@ -3887,6 +3887,125 @@ function loginUser() {
     message.textContent = "Invalid email or password.";
   }
 }
+  function toggleFloatingChat() {
+  const chatBox = document.getElementById("floatingChatBox");
+
+  if (chatBox.style.display === "flex") {
+    chatBox.style.display = "none";
+  } else {
+    chatBox.style.display = "flex";
+  }
+}
+
+
+function sendFloatingChat() {
+
+  const input =
+    document.getElementById("floatingChatInput");
+
+  const messages =
+    document.getElementById("floatingChatMessages");
+
+  const question =
+    input.value.trim();
+
+  if (!question) return;
+
+
+  messages.innerHTML += `
+    <div class="floating-msg user">
+      ${question}
+    </div>
+  `;
+
+
+  const q = question.toLowerCase();
+
+  let answer;
+
+
+  if (
+    q.includes("stock") ||
+    q.includes("inventory") ||
+    q.includes("reorder")
+  ) {
+
+    const product =
+      inventory.reduce(
+        (a, b) =>
+          b.demand / Math.max(b.stock, 1) >
+          a.demand / Math.max(a.stock, 1)
+            ? b
+            : a
+      );
+
+    answer =
+      `${product.product} currently has the highest demand-to-stock pressure. Stock is ${product.stock}, demand is ${product.demand}, and reorder point is ${product.reorderPoint}.`;
+
+
+  } else if (q.includes("supplier")) {
+
+    const supplier = bestSupplier();
+
+    answer =
+      `The current highest weighted supplier score is ${score(supplier)}% for ${supplier.name}.`;
+
+
+  } else if (
+    q.includes("overstock") ||
+    q.includes("excess")
+  ) {
+
+    const excess =
+      inventory.filter(
+        i => i.stock > i.demand * 2
+      );
+
+    answer =
+      excess.length
+        ? `Potential excess inventory: ${excess.map(i => i.product).join(", ")}.`
+        : "No products currently exceed 2× monthly demand.";
+
+
+  } else if (
+    q.includes("purchase") ||
+    q.includes("procurement") ||
+    q.includes("po")
+  ) {
+
+    const count =
+      inventory.filter(
+        i => i.stock < i.reorderPoint
+      ).length;
+
+    answer =
+      `There are ${count} inventory items below their reorder point. You can open Procurement Automation to generate purchase requests.`;
+
+
+  } else {
+
+    answer =
+      "I can help with inventory, reorder needs, suppliers, procurement and excess stock. Try asking: Which product needs reorder?";
+
+  }
+
+
+  setTimeout(() => {
+
+    messages.innerHTML += `
+      <div class="floating-msg ai">
+        ${answer}
+      </div>
+    `;
+
+    messages.scrollTop =
+      messages.scrollHeight;
+
+  }, 400);
+
+
+  input.value = "";
+}
 </script>
 
 </body>
