@@ -3727,7 +3727,23 @@ document.addEventListener(
 "DOMContentLoaded",
 renderAll
 );
+function loginUser() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  const message = document.getElementById("loginMessage");
 
+  if (!email || !password) {
+    message.textContent = "Please enter email and password.";
+    return;
+  }
+
+  if (email === "admin@optiflow.com" && password === "admin123") {
+    document.getElementById("loginPage").style.display = "none";
+    message.textContent = "";
+  } else {
+    message.textContent = "Invalid email or password.";
+  }
+}
 </script>
 
 </body>
