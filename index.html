@@ -3,2369 +3,660 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OPTIFLOW 360 | Supply Chain Intelligence</title>
+<title>OPTIFLOW 360 | Enterprise Supply Chain Intelligence</title>
+
+<!-- Leaflet map library -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+ integrity="sha256-p4NxAoJBhIINfQ3F9S0JvYV5rQ9Y2qF2x6f5fQf0Jw="
+ crossorigin=""/>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Inter,Segoe UI,Arial,sans-serif;
-}
-
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Arial,sans-serif}
 :root{
-    --navy:#0b1220;
-    --navy2:#111b2e;
-    --green:#19c37d;
-    --green2:#0f9f68;
-    --blue:#3b82f6;
-    --orange:#f59e0b;
-    --red:#ef4444;
-    --purple:#8b5cf6;
-    --bg:#f4f7fb;
-    --card:#ffffff;
-    --text:#172033;
-    --muted:#718096;
-    --border:#e7ebf2;
-}
-
-body{
-    background:var(--bg);
-    color:var(--text);
-}
-
-/* TOP BAR */
-
-.topbar{
-    height:70px;
-    background:var(--navy);
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 28px;
-    position:sticky;
-    top:0;
-    z-index:20;
-}
-
-.brand{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    font-size:22px;
-    font-weight:800;
-    letter-spacing:.4px;
-}
-
-.brand-mark{
-    width:38px;
-    height:38px;
-    border-radius:10px;
-    background:linear-gradient(135deg,var(--green),#38bdf8);
-    display:grid;
-    place-items:center;
-    color:white;
-    font-weight:900;
-}
-
-.brand span{
-    color:var(--green);
-}
-
-.top-right{
-    display:flex;
-    align-items:center;
-    gap:18px;
-    color:#cbd5e1;
-    font-size:13px;
-}
-
-.live{
-    display:flex;
-    align-items:center;
-    gap:7px;
-}
-
-.dot{
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:var(--green);
-    box-shadow:0 0 10px var(--green);
-}
-
-.avatar{
-    width:35px;
-    height:35px;
-    border-radius:50%;
-    background:#26334b;
-    display:grid;
-    place-items:center;
-    color:white;
-    font-weight:bold;
-}
-
-/* LAYOUT */
-
-.layout{
-    display:flex;
-    min-height:calc(100vh - 70px);
-}
-
-.sidebar{
-    width:245px;
-    background:var(--navy2);
-    color:white;
-    padding:24px 14px;
-    flex-shrink:0;
-}
-
-.side-title{
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    color:#64748b;
-    margin:5px 14px 12px;
-}
-
-.nav{
-    padding:12px 14px;
-    margin:5px 0;
-    border-radius:9px;
-    color:#b9c4d5;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    font-size:14px;
-    transition:.2s;
-}
-
-.nav:hover{
-    background:#18243a;
-    color:white;
-}
-
-.nav.active{
-    background:rgba(25,195,125,.13);
-    color:#50e6a5;
-    border-left:3px solid var(--green);
-}
-
-.main{
-    flex:1;
-    padding:30px;
-    min-width:0;
-}
-
-/* PAGES */
-
-.page{
-    display:none;
-    animation:fade .25s ease;
-}
-
-.page.active{
-    display:block;
-}
-
-@keyframes fade{
-    from{opacity:0;transform:translateY(5px)}
-    to{opacity:1;transform:translateY(0)}
-}
-
-.page-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    margin-bottom:25px;
-}
-
-.page-head h1{
-    font-size:28px;
-    margin-bottom:6px;
-}
-
-.page-head p{
-    color:var(--muted);
-    font-size:14px;
-}
-
-.btn{
-    border:none;
-    padding:11px 17px;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:600;
-    background:var(--navy);
-    color:white;
-}
-
-.btn.green{
-    background:var(--green2);
-}
-
-.btn:hover{
-    opacity:.9;
-}
-
-/* KPI */
-
-.kpis{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:18px;
-    margin-bottom:22px;
-}
-
-.kpi{
-    background:white;
-    border:1px solid var(--border);
-    border-radius:13px;
-    padding:20px;
-    box-shadow:0 3px 15px rgba(15,23,42,.04);
-}
-
-.kpi-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    color:var(--muted);
-    font-size:13px;
-}
-
-.kpi-icon{
-    width:38px;
-    height:38px;
-    border-radius:9px;
-    display:grid;
-    place-items:center;
-    font-size:18px;
-    background:#eef5ff;
-}
-
-.kpi-value{
-    font-size:27px;
-    font-weight:800;
-    margin:13px 0 5px;
-}
-
-.kpi-change{
-    font-size:12px;
-}
-
-.up{color:#16a34a}
-.down{color:#dc2626}
-
-/* PANELS */
-
-.grid2{
-    display:grid;
-    grid-template-columns:1.5fr 1fr;
-    gap:20px;
-    margin-bottom:20px;
-}
-
-.grid3{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:18px;
-    margin-bottom:20px;
-}
-
-.panel{
-    background:white;
-    border:1px solid var(--border);
-    border-radius:13px;
-    padding:21px;
-    box-shadow:0 3px 15px rgba(15,23,42,.04);
-}
-
-.panel-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:18px;
-}
-
-.panel-head h2{
-    font-size:16px;
-}
-
-.small{
-    color:var(--muted);
-    font-size:12px;
-}
-
-/* CHART */
-
-.chart{
-    height:210px;
-    display:flex;
-    align-items:flex-end;
-    gap:14px;
-    padding:20px 8px 5px;
-    border-bottom:1px solid var(--border);
-}
-
-.bar{
-    flex:1;
-    border-radius:6px 6px 0 0;
-    background:linear-gradient(to top,#16a36d,#51dfaa);
-    min-width:20px;
-    position:relative;
-}
-
-.bar span{
-    position:absolute;
-    bottom:-24px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:11px;
-    color:var(--muted);
-}
-
-.bar b{
-    position:absolute;
-    top:-20px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:10px;
-    color:var(--muted);
-}
-
-/* TABLE */
-
-.table-wrap{
-    overflow-x:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-th{
-    color:#7b8798;
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:.5px;
-    text-align:left;
-    padding:12px 9px;
-    border-bottom:1px solid var(--border);
-}
-
-td{
-    padding:14px 9px;
-    font-size:13px;
-    border-bottom:1px solid #edf0f4;
-}
-
-tr:last-child td{
-    border-bottom:none;
-}
-
-.badge{
-    padding:5px 9px;
-    border-radius:20px;
-    font-size:11px;
-    font-weight:700;
-    display:inline-block;
-}
-
-.badge.green{
-    background:#dcfce7;
-    color:#15803d;
-}
-
-.badge.red{
-    background:#fee2e2;
-    color:#dc2626;
-}
-
-.badge.orange{
-    background:#fef3c7;
-    color:#b45309;
-}
-
-.badge.blue{
-    background:#dbeafe;
-    color:#1d4ed8;
-}
-
-.badge.purple{
-    background:#ede9fe;
-    color:#6d28d9;
-}
-
-/* ALERTS */
-
-.alert{
-    display:flex;
-    gap:12px;
-    padding:13px;
-    border-radius:9px;
-    margin-bottom:10px;
-    background:#fff8eb;
-    border-left:4px solid var(--orange);
-}
-
-.alert.red{
-    background:#fff1f2;
-    border-color:var(--red);
-}
-
-.alert.green{
-    background:#ecfdf5;
-    border-color:var(--green);
-}
-
-.alert-icon{
-    font-size:18px;
-}
-
-.alert strong{
-    font-size:13px;
-    display:block;
-    margin-bottom:4px;
-}
-
-.alert p{
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.5;
-}
-
-/* AI */
-
-.ai-card{
-    background:linear-gradient(135deg,#0c1829,#12263d);
-    color:white;
-    border-radius:14px;
-    padding:23px;
-    position:relative;
-    overflow:hidden;
-}
-
-.ai-card:after{
-    content:"";
-    position:absolute;
-    width:180px;
-    height:180px;
-    right:-70px;
-    top:-70px;
-    border-radius:50%;
-    background:rgba(25,195,125,.1);
-}
-
-.ai-label{
-    color:#5ee8ae;
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    font-weight:bold;
-}
-
-.ai-card h2{
-    margin:8px 0;
-    font-size:20px;
-}
-
-.ai-card p{
-    color:#aebdce;
-    font-size:13px;
-    line-height:1.6;
-}
-
-.ai-recommend{
-    margin-top:17px;
-    padding:15px;
-    background:rgba(255,255,255,.07);
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:9px;
-}
-
-.ai-recommend strong{
-    color:#fff;
-}
-
-.ai-recommend span{
-    color:#64e7b0;
-}
-
-/* SUPPLIER SCORE */
-
-.score-row{
-    margin-bottom:16px;
-}
-
-.score-top{
-    display:flex;
-    justify-content:space-between;
-    font-size:12px;
-    margin-bottom:7px;
-}
-
-.progress{
-    height:7px;
-    border-radius:10px;
-    background:#edf1f6;
-    overflow:hidden;
-}
-
-.progress span{
-    height:100%;
-    display:block;
-    border-radius:10px;
-    background:linear-gradient(90deg,#19c37d,#48df9f);
-}
-
-/* SEARCH */
-
-.search{
-    border:1px solid var(--border);
-    padding:10px 13px;
-    border-radius:8px;
-    outline:none;
-    width:230px;
-}
-
-/* RECOMMENDATIONS */
-
-.rec{
-    padding:16px;
-    border:1px solid var(--border);
-    border-radius:10px;
-    margin-bottom:12px;
-    display:flex;
-    justify-content:space-between;
-    gap:15px;
-}
-
-.rec h3{
-    font-size:14px;
-    margin-bottom:6px;
-}
-
-.rec p{
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.5;
-}
-
-.priority{
-    white-space:nowrap;
-}
-
-/* FOOTER */
-
-.footer{
-    text-align:center;
-    color:#94a3b8;
-    font-size:11px;
-    padding:25px 0 5px;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:1100px){
-    .kpis{grid-template-columns:repeat(2,1fr)}
-    .grid2{grid-template-columns:1fr}
-}
-
-@media(max-width:800px){
-    .sidebar{width:70px}
-    .side-title{display:none}
-    .nav span:last-child{display:none}
-    .nav{justify-content:center}
-    .main{padding:18px}
-    .grid3{grid-template-columns:1fr}
-}
-
-@media(max-width:600px){
-    .top-right .live{display:none}
-    .kpis{grid-template-columns:1fr}
-    .page-head{flex-direction:column;gap:15px}
-    .search{width:100%}
-}
+ --navy:#08111f;--navy2:#101b2d;--green:#18c47d;--green2:#0f9f68;
+ --blue:#3b82f6;--purple:#8b5cf6;--orange:#f59e0b;--red:#ef4444;
+ --cyan:#06b6d4;--bg:#f3f6fa;--card:#fff;--text:#162033;--muted:#6b7a90;
+ --border:#e4e9f1;--shadow:0 8px 28px rgba(15,23,42,.06)
+}
+body{background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.topbar{height:70px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:1000}
+.brand{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:800}.brand span{color:var(--green)}
+.brand-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--green),#38bdf8);display:grid;place-items:center;font-weight:900}
+.top-right{display:flex;align-items:center;gap:18px;color:#cbd5e1;font-size:13px}.live{display:flex;align-items:center;gap:7px}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.avatar{width:35px;height:35px;border-radius:50%;background:#26334b;display:grid;place-items:center;font-weight:800}
+.layout{display:flex;min-height:calc(100vh - 70px)}.sidebar{width:245px;background:var(--navy2);color:#fff;padding:24px 14px;flex-shrink:0}
+.side-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin:5px 14px 12px}
+.nav{padding:12px 14px;margin:5px 0;border-radius:9px;color:#b9c4d5;cursor:pointer;display:flex;align-items:center;gap:12px;font-size:14px;transition:.2s}
+.nav:hover{background:#18243a;color:#fff}.nav.active{background:rgba(25,195,125,.13);color:#50e6a5;border-left:3px solid var(--green)}
+.main{flex:1;padding:28px;min-width:0}.page{display:none;animation:fade .2s}.page.active{display:block}
+@keyframes fade{from{opacity:.2;transform:translateY(5px)}to{opacity:1;transform:none}}
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:22px}.page-head h1{font-size:28px;margin-bottom:6px}.page-head p{color:var(--muted);font-size:14px}
+.btn{border:0;padding:10px 15px;border-radius:8px;background:var(--navy);color:#fff;font-weight:700}.btn.green{background:var(--green2)}.btn.blue{background:var(--blue)}.btn.purple{background:var(--purple)}.btn.orange{background:var(--orange)}.btn.red{background:var(--red)}.btn.light{background:#eef3f8;color:var(--text)}.btn.small{padding:7px 10px;font-size:12px}.btn:hover{filter:brightness(.96);transform:translateY(-1px)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}.kpi,.panel{background:#fff;border:1px solid var(--border);border-radius:13px;padding:19px;box-shadow:var(--shadow)}
+.kpi-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}.kpi-icon{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;background:#eef5ff;font-size:18px}.kpi-value{font-size:27px;font-weight:800;margin:12px 0 4px}.kpi-change{font-size:12px}.up{color:#16a34a}.down{color:#dc2626}
+.grid2{display:grid;grid-template-columns:1.45fr 1fr;gap:18px;margin-bottom:18px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel-head h2{font-size:16px}.small{color:var(--muted);font-size:12px}
+.chart{height:210px;display:flex;align-items:flex-end;gap:14px;padding:20px 8px 6px;border-bottom:1px solid var(--border)}.bar{flex:1;border-radius:6px 6px 0 0;background:linear-gradient(to top,#16a36d,#51dfaa);min-width:20px;position:relative}.bar span{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted)}.bar b{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted)}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th{color:#718096;font-size:11px;text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:11px 8px;border-bottom:1px solid var(--border)}td{padding:12px 8px;font-size:13px;border-bottom:1px solid #edf0f4}tr:last-child td{border-bottom:0}
+.badge{padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;display:inline-block}.badge.green{background:#dcfce7;color:#15803d}.badge.red{background:#fee2e2;color:#dc2626}.badge.orange{background:#fef3c7;color:#b45309}.badge.blue{background:#dbeafe;color:#1d4ed8}.badge.purple{background:#ede9fe;color:#6d28d9}.badge.gray{background:#eef2f7;color:#526174}
+.alert{display:flex;gap:11px;padding:13px;border-radius:9px;margin-bottom:10px;background:#fff8eb;border-left:4px solid var(--orange)}.alert.red{background:#fff1f2;border-color:var(--red)}.alert.green{background:#ecfdf5;border-color:var(--green)}.alert strong{font-size:13px;display:block;margin-bottom:4px}.alert p{color:var(--muted);font-size:12px;line-height:1.45}
+.ai-card{background:linear-gradient(135deg,#0c1829,#12263d);color:#fff;border-radius:14px;padding:22px;position:relative;overflow:hidden}.ai-label{color:#5ee8ae;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:800}.ai-card h2{margin:8px 0;font-size:20px}.ai-card p{color:#aebdce;font-size:13px;line-height:1.6}.ai-recommend{margin-top:15px;padding:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);border-radius:9px}.ai-recommend span{color:#64e7b0}
+.score-row{margin-bottom:15px}.score-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}.progress{height:7px;border-radius:10px;background:#edf1f6;overflow:hidden}.progress span{height:100%;display:block;border-radius:10px;background:linear-gradient(90deg,#19c37d,#48df9f)}
+.search,.field{border:1px solid var(--border);padding:10px 12px;border-radius:8px;outline:none;background:#fff;width:100%}.field:focus,.search:focus{border-color:#9acdb9;box-shadow:0 0 0 3px rgba(24,196,125,.1)}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.form-grid.four{grid-template-columns:repeat(4,1fr)}.form-group label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:5px}
+.action-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.rec{padding:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:11px;display:flex;justify-content:space-between;gap:15px}.rec h3{font-size:14px;margin-bottom:6px}.rec p{color:var(--muted);font-size:12px;line-height:1.5}
+#map{height:430px;border-radius:12px;overflow:hidden;border:1px solid var(--border)}.location-card{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid var(--border);border-radius:9px;margin-bottom:9px}.location-card strong{font-size:13px}.location-card p{font-size:11px;color:var(--muted);margin-top:3px}
+.timeline{border-left:2px solid #dbe4ee;margin-left:8px;padding-left:18px}.timeline-item{position:relative;margin-bottom:17px}.timeline-item:before{content:"";position:absolute;left:-25px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #e4f8ef}.timeline-item strong{font-size:13px}.timeline-item p{font-size:12px;color:var(--muted);margin-top:3px}
+.modal-backdrop{position:fixed;inset:0;background:rgba(4,10,20,.55);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px}.modal-backdrop.show{display:flex}.modal{background:#fff;width:min(720px,100%);max-height:90vh;overflow:auto;border-radius:16px;padding:22px;box-shadow:0 25px 80px rgba(0,0,0,.25)}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.close{border:0;background:#eef2f7;border-radius:8px;width:34px;height:34px;font-size:18px}
+.toast{position:fixed;right:24px;bottom:24px;background:#08111f;color:#fff;padding:13px 17px;border-radius:9px;z-index:3000;box-shadow:0 10px 35px rgba(0,0,0,.25);font-size:13px}
+.footer{text-align:center;color:#94a3b8;font-size:11px;padding:24px 0 5px}
+.empty{padding:25px;text-align:center;color:var(--muted);font-size:13px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.form-grid,.form-grid.four{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.sidebar{width:70px}.side-title,.nav span:last-child{display:none}.nav{justify-content:center}.main{padding:17px}}
+@media(max-width:600px){.top-right span,.top-right .live{display:none}.kpis{grid-template-columns:1fr}.form-grid,.form-grid.four{grid-template-columns:1fr}.page-head{flex-direction:column}}
 </style>
 </head>
 
 <body>
-
-<!-- TOP BAR -->
 <header class="topbar">
-
-    <div class="brand">
-        <div class="brand-mark">O</div>
-        OPTIFLOW <span>360</span>
-    </div>
-
-    <div class="top-right">
-        <div class="live">
-            <div class="dot"></div>
-            System Operational
-        </div>
-        <span>Enterprise Supply Chain Intelligence</span>
-        <div class="avatar">GP</div>
-    </div>
-
+  <div class="brand"><div class="brand-mark">O</div>OPTIFLOW <span>360</span></div>
+  <div class="top-right">
+    <div class="live"><div class="dot"></div>System Operational</div>
+    <span>Enterprise Supply Chain Intelligence</span>
+    <div class="avatar" id="topAvatar">GP</div>
+  </div>
 </header>
 
-
 <div class="layout">
-
-<!-- SIDEBAR -->
 <aside class="sidebar">
-
-    <div class="side-title">Workspace</div>
-
-    <div class="nav active" onclick="showPage('dashboard',this)">
-        <span>📊</span><span>Dashboard</span>
-    </div>
-
-    <div class="nav" onclick="showPage('inventory',this)">
-        <span>📦</span><span>Inventory Intelligence</span>
-    </div>
-
-    <div class="nav" onclick="showPage('suppliers',this)">
-        <span>🏭</span><span>Supplier Management</span>
-    </div>
-
-    <div class="nav" onclick="showPage('procurement',this)">
-        <span>🛒</span><span>Procurement Automation</span>
-    </div>
-
-    <div class="nav" onclick="showPage('risks',this)">
-        <span>⚠️</span><span>Risk & Alerts</span>
-    </div>
-
-    <div class="nav" onclick="showPage('ai',this)">
-        <span>🤖</span><span>AI Decision Support</span>
-    </div>
-
-    <div class="nav" onclick="showPage('reports',this)">
-        <span>📈</span><span>Reports & Analytics</span>
-    </div>
-
+  <div class="side-title">Workspace</div>
+  <div class="nav active" onclick="showPage('dashboard',this)"><span>📊</span><span>Dashboard</span></div>
+  <div class="nav" onclick="showPage('inventory',this)"><span>📦</span><span>Inventory Intelligence</span></div>
+  <div class="nav" onclick="showPage('suppliers',this)"><span>🏭</span><span>Supplier Management</span></div>
+  <div class="nav" onclick="showPage('procurement',this)"><span>🛒</span><span>Procurement Automation</span></div>
+  <div class="nav" onclick="showPage('risks',this)"><span>⚠️</span><span>Risk & Alerts</span></div>
+  <div class="nav" onclick="showPage('ai',this)"><span>🤖</span><span>AI Decision Support</span></div>
+  <div class="nav" onclick="showPage('locations',this)"><span>🗺️</span><span>Stock Locations</span></div>
+  <div class="nav" onclick="showPage('reports',this)"><span>📈</span><span>Reports & Analytics</span></div>
+  <div class="nav" onclick="openAdminModal()"><span>⚙️</span><span>Admin Profile</span></div>
 </aside>
-
 
 <main class="main">
 
-
-<!-- ================= DASHBOARD ================= -->
-
 <section id="dashboard" class="page active">
+  <div class="page-head">
+    <div><h1>Supply Chain Overview</h1><p>Live operational intelligence for inventory, suppliers and procurement decisions.</p></div>
+    <div class="action-row"><button class="btn light" onclick="seedDemo()">Load Demo Scenario</button><button class="btn green" onclick="refreshDashboard()">↻ Refresh Data</button></div>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-top">Inventory Value <div class="kpi-icon">💰</div></div><div class="kpi-value" id="kInventoryValue">₹0</div><div class="kpi-change up">Calculated from live inventory</div></div>
+    <div class="kpi"><div class="kpi-top">Active Products <div class="kpi-icon">📦</div></div><div class="kpi-value" id="kProducts">0</div><div class="kpi-change up">Including manual entries</div></div>
+    <div class="kpi"><div class="kpi-top">Low Stock Items <div class="kpi-icon">⚠️</div></div><div class="kpi-value down" id="kLow">0</div><div class="kpi-change down">Requires attention</div></div>
+    <div class="kpi"><div class="kpi-top">Supplier Performance <div class="kpi-icon">🏭</div></div><div class="kpi-value up" id="kSupplier">0%</div><div class="kpi-change up">Weighted supplier score</div></div>
+  </div>
 
-    <div class="page-head">
-        <div>
-            <h1>Supply Chain Overview</h1>
-            <p>Real-time intelligence for inventory, suppliers and procurement decisions.</p>
-        </div>
-
-        <button class="btn green" onclick="refreshData()">↻ Refresh Data</button>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-head"><h2>Procurement Spend</h2><span class="small">Demo monthly trend</span></div>
+      <div class="chart" id="spendChart"></div>
     </div>
-
-
-    <div class="kpis">
-
-        <div class="kpi">
-            <div class="kpi-top">
-                Inventory Value
-                <div class="kpi-icon">💰</div>
-            </div>
-            <div class="kpi-value">₹12.8L</div>
-            <div class="kpi-change up">↑ 8.4% from last month</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-top">
-                Active Products
-                <div class="kpi-icon">📦</div>
-            </div>
-            <div class="kpi-value">248</div>
-            <div class="kpi-change up">↑ 12 new products</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-top">
-                Low Stock Items
-                <div class="kpi-icon">⚠️</div>
-            </div>
-            <div class="kpi-value red">18</div>
-            <div class="kpi-change down">↑ 4 since yesterday</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-top">
-                Supplier Performance
-                <div class="kpi-icon">🏭</div>
-            </div>
-            <div class="kpi-value green">91%</div>
-            <div class="kpi-change up">↑ 3.2% this quarter</div>
-        </div>
-
+    <div class="panel">
+      <div class="panel-head"><h2>Critical Alerts</h2><span class="badge red" id="alertCount">0 Active</span></div>
+      <div id="dashboardAlerts"></div>
     </div>
+  </div>
 
-
-    <div class="grid2">
-
-        <div class="panel">
-
-            <div class="panel-head">
-                <h2>Procurement Spend</h2>
-                <span class="small">Last 6 months</span>
-            </div>
-
-            <div class="chart">
-                <div class="bar" style="height:45%"><b>4.2L</b><span>Apr</span></div>
-                <div class="bar" style="height:60%"><b>5.5L</b><span>May</span></div>
-                <div class="bar" style="height:52%"><b>4.8L</b><span>Jun</span></div>
-                <div class="bar" style="height:75%"><b>6.9L</b><span>Jul</span></div>
-                <div class="bar" style="height:68%"><b>6.2L</b><span>Aug</span></div>
-                <div class="bar" style="height:88%"><b>8.4L</b><span>Sep</span></div>
-            </div>
-
-        </div>
-
-
-        <div class="panel">
-
-            <div class="panel-head">
-                <h2>Critical Alerts</h2>
-                <span class="badge red">4 Active</span>
-            </div>
-
-            <div class="alert red">
-                <div class="alert-icon">🔴</div>
-                <div>
-                    <strong>Stockout Risk</strong>
-                    <p>Keyboard inventory may reach zero within 6 days.</p>
-                </div>
-            </div>
-
-            <div class="alert">
-                <div class="alert-icon">🟠</div>
-                <div>
-                    <strong>Supplier Delay</strong>
-                    <p>Supplier B has a delayed shipment.</p>
-                </div>
-            </div>
-
-            <div class="alert green">
-                <div class="alert-icon">🟢</div>
-                <div>
-                    <strong>Optimization Found</strong>
-                    <p>Potential ₹18,400 procurement saving detected.</p>
-                </div>
-            </div>
-
-        </div>
-
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-head"><h2>Inventory Intelligence</h2><span class="small">Live calculation</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Product</th><th>Stock</th><th>Demand</th><th>Status</th></tr></thead><tbody id="dashboardInventory"></tbody></table></div>
     </div>
-
-
-    <div class="grid2">
-
-        <div class="panel">
-
-            <div class="panel-head">
-                <h2>Inventory Intelligence</h2>
-                <span class="small">Current status</span>
-            </div>
-
-            <div class="table-wrap">
-                <table>
-                    <tr>
-                        <th>Product</th>
-                        <th>Stock</th>
-                        <th>Demand</th>
-                        <th>Status</th>
-                    </tr>
-
-                    <tr>
-                        <td>Laptop Stand</td>
-                        <td>18</td>
-                        <td>50</td>
-                        <td><span class="badge red">Low Stock</span></td>
-                    </tr>
-
-                    <tr>
-                        <td>Wireless Mouse</td>
-                        <td>124</td>
-                        <td>80</td>
-                        <td><span class="badge green">Normal</span></td>
-                    </tr>
-
-                    <tr>
-                        <td>Keyboard</td>
-                        <td>15</td>
-                        <td>65</td>
-                        <td><span class="badge red">Critical</span></td>
-                    </tr>
-
-                    <tr>
-                        <td>Monitor</td>
-                        <td>90</td>
-                        <td>40</td>
-                        <td><span class="badge orange">Overstock</span></td>
-                    </tr>
-                </table>
-            </div>
-
-        </div>
-
-
-        <div class="ai-card">
-
-            <div class="ai-label">AI Decision Engine</div>
-
-            <h2>Recommended Action</h2>
-
-            <p>
-                OPTIFLOW 360 detected a potential stockout based on
-                current inventory, demand velocity and supplier lead time.
-            </p>
-
-            <div class="ai-recommend">
-                <strong>Purchase 120 Keyboard units</strong>
-                <p style="margin-top:7px">
-                    Suggested supplier:
-                    <span>TechSource Pvt Ltd</span>
-                </p>
-                <p style="margin-top:5px">
-                    Estimated cost: <span>₹48,000</span>
-                </p>
-            </div>
-
-        </div>
-
+    <div class="ai-card">
+      <div class="ai-label">AI Decision Engine</div>
+      <h2>Recommended Action</h2>
+      <p id="dashboardAIText">Run AI analysis to generate a decision from current inventory, demand and supplier performance.</p>
+      <div class="ai-recommend" id="dashboardAIBox"><strong>No recommendation yet</strong></div>
+      <div class="action-row"><button class="btn green" onclick="showPage('ai',document.querySelectorAll('.nav')[5]);generateAI()">Generate AI Decision</button></div>
     </div>
-
+  </div>
 </section>
-
-
-<!-- ================= INVENTORY ================= -->
 
 <section id="inventory" class="page">
+  <div class="page-head">
+    <div><h1>Inventory Intelligence</h1><p>Manually enter products, calculate stock status and generate replenishment recommendations.</p></div>
+    <button class="btn green" onclick="runInventoryAnalysis()">🔎 Analyze Inventory</button>
+  </div>
 
-    <div class="page-head">
-        <div>
-            <h1>Inventory Intelligence</h1>
-            <p>Monitor stock levels, demand and reorder requirements.</p>
-        </div>
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-top">Total SKUs <div class="kpi-icon">📦</div></div><div class="kpi-value" id="iTotal">0</div><div class="small">Live product count</div></div>
+    <div class="kpi"><div class="kpi-top">Low Stock <div class="kpi-icon">🔴</div></div><div class="kpi-value down" id="iLow">0</div><div class="small">Critical + reorder</div></div>
+    <div class="kpi"><div class="kpi-top">Overstock <div class="kpi-icon">📊</div></div><div class="kpi-value" id="iOver">0</div><div class="small">Optimization opportunities</div></div>
+    <div class="kpi"><div class="kpi-top">Inventory Accuracy <div class="kpi-icon">✓</div></div><div class="kpi-value up">96.8%</div><div class="small">Demo cycle-count metric</div></div>
+  </div>
 
-        <button class="btn green" onclick="showToast('Inventory analysis refreshed')">
-            Analyze Inventory
-        </button>
+  <div class="panel" style="margin-bottom:18px">
+    <div class="panel-head"><h2>➕ Add New Product</h2><span class="small">Manual inventory entry</span></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Product Name</label><input id="newProductName" class="field" placeholder="e.g. Printer Cartridge"></div>
+      <div class="form-group"><label>Category</label><input id="newProductCategory" class="field" placeholder="e.g. Office Supplies"></div>
+      <div class="form-group"><label>Current Stock</label><input id="newProductStock" class="field" type="number" min="0" placeholder="10"></div>
+      <div class="form-group"><label>Monthly Demand</label><input id="newProductDemand" class="field" type="number" min="1" placeholder="40"></div>
+      <div class="form-group"><label>Reorder Point</label><input id="newProductReorder" class="field" type="number" min="1" placeholder="30"></div>
+      <div class="form-group"><label>Unit Cost (₹)</label><input id="newProductCost" class="field" type="number" min="1" placeholder="2000"></div>
+      <div class="form-group"><label>Stock Location</label><select id="newProductLocation" class="field"></select></div>
+      <div class="form-group"><label>Supplier</label><select id="newProductSupplier" class="field"></select></div>
     </div>
+    <div class="action-row"><button class="btn green" onclick="addNewProduct()">➕ Add Product</button><button class="btn light" onclick="clearProductForm()">Clear</button></div>
+  </div>
 
+  <div class="panel">
+    <div class="panel-head"><h2>Inventory Status</h2><input id="inventorySearch" class="search" placeholder="Search product..." onkeyup="filterInventory()"></div>
+    <div class="table-wrap"><table id="inventoryTable"><thead><tr><th>Product</th><th>Category</th><th>Stock</th><th>Demand</th><th>Reorder</th><th>Cost</th><th>Location</th><th>Status</th><th>Action</th></tr></thead><tbody id="inventoryBody"></tbody></table></div>
+  </div>
 
-    <div class="kpis">
-
-        <div class="kpi">
-            <div class="kpi-top">Total SKUs <div class="kpi-icon">📦</div></div>
-            <div class="kpi-value">248</div>
-            <div class="small">Across 8 categories</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-top">Low Stock <div class="kpi-icon">🔴</div></div>
-            <div class="kpi-value red">18</div>
-            <div class="small">Require attention</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-top">Overstock <div class="kpi-icon">📊</div></div>
-            <div class="kpi-value orange">11</div>
-            <div class="small">Optimization opportunities</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-top">Inventory Accuracy <div class="kpi-icon">✓</div></div>
-            <div class="kpi-value green">96.8%</div>
-            <div class="small">Cycle-count accuracy</div>
-        </div>
-
-    </div>
-
-
-    <div class="panel" style="margin-bottom:20px;">
-    <div class="panel-head">
-        <h2>➕ Add New Product</h2>
-        <span class="small">Manual inventory entry</span>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;padding:5px 0 15px;">
-        <input id="newProductName" class="search" placeholder="Product Name">
-        <input id="newProductCategory" class="search" placeholder="Category">
-        <input id="newProductStock" class="search" type="number" placeholder="Current Stock">
-        <input id="newProductDemand" class="search" type="number" placeholder="Monthly Demand">
-        <input id="newProductReorder" class="search" type="number" placeholder="Reorder Point">
-        <input id="newProductCost" class="search" type="number" placeholder="Unit Cost ₹">
-    </div>
-
-    <button class="btn green" onclick="addNewProduct()">
-        Add Product
-    </button>
-</div>
-
-        <div class="panel-head">
-            <h2>Inventory Status</h2>
-            <input class="search" placeholder="Search product..." onkeyup="filterTable(this,'inventoryTable')">
-        </div>
-
-        <div class="table-wrap">
-
-            <table id="inventoryTable">
-
-                <tr>
-                    <th>Product</th>
-                    <th>Category</th>
-                    <th>Current Stock</th>
-                    <th>Monthly Demand</th>
-                    <th>Reorder Point</th>
-                    <th>Unit Cost</th>
-                    <th>Status</th>
-                </tr>
-
-                <tr>
-                    <td>Laptop Stand</td>
-                    <td>Accessories</td>
-                    <td>18</td>
-                    <td>50</td>
-                    <td>70</td>
-                    <td>₹1,200</td>
-                    <td><span class="badge red">Critical</span></td>
-                </tr>
-
-                <tr>
-                    <td>Wireless Mouse</td>
-                    <td>Peripherals</td>
-                    <td>124</td>
-                    <td>80</td>
-                    <td>60</td>
-                    <td>₹650</td>
-                    <td><span class="badge green">Healthy</span></td>
-                </tr>
-
-                <tr>
-                    <td>Mechanical Keyboard</td>
-                    <td>Peripherals</td>
-                    <td>15</td>
-                    <td>65</td>
-                    <td>75</td>
-                    <td>₹2,400</td>
-                    <td><span class="badge red">Critical</span></td>
-                </tr>
-
-                <tr>
-                    <td>24-inch Monitor</td>
-                    <td>Displays</td>
-                    <td>90</td>
-                    <td>40</td>
-                    <td>35</td>
-                    <td>₹11,500</td>
-                    <td><span class="badge orange">Overstock</span></td>
-                </tr>
-
-                <tr>
-                    <td>USB-C Hub</td>
-                    <td>Accessories</td>
-                    <td>62</td>
-                    <td>55</td>
-                    <td>50</td>
-                    <td>₹1,800</td>
-                    <td><span class="badge blue">Normal</span></td>
-                </tr>
-
-                <tr>
-                    <td>Webcam</td>
-                    <td>Electronics</td>
-                    <td>42</td>
-                    <td>48</td>
-                    <td>55</td>
-                    <td>₹3,200</td>
-                    <td><span class="badge orange">Reorder</span></td>
-                </tr>
-
-            </table>
-
-        </div>
-
-    </div>
-
+  <div class="panel" style="margin-top:18px">
+    <div class="panel-head"><h2>Latest Inventory Analysis</h2><span class="badge purple">Calculated</span></div>
+    <div id="inventoryAnalysisResult" class="empty">Click Analyze Inventory to calculate risks and recommended purchase quantities.</div>
+  </div>
 </section>
-
-
-<!-- ================= SUPPLIERS ================= -->
 
 <section id="suppliers" class="page">
-
-    <div class="page-head">
-        <div>
-            <h1>Supplier Management</h1>
-            <p>Evaluate supplier reliability, quality and delivery performance.</p>
-        </div>
-
-        <button class="btn green" onclick="showToast('Supplier scores recalculated')">
-            Recalculate Scores
-        </button>
-    </div>
-
-
-    <div class="grid3">
-
-        <div class="panel">
-
-            <div class="panel-head">
-                <h2>TechSource Pvt Ltd</h2>
-                <span class="badge green">Preferred</span>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>Overall Score</span><b>92%</b></div>
-                <div class="progress"><span style="width:92%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>Quality</span><b>95%</b></div>
-                <div class="progress"><span style="width:95%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>On-Time Delivery</span><b>91%</b></div>
-                <div class="progress"><span style="width:91%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>Price Competitiveness</span><b>89%</b></div>
-                <div class="progress"><span style="width:89%"></span></div>
-            </div>
-
-        </div>
-
-
-        <div class="panel">
-
-            <div class="panel-head">
-                <h2>Global Components</h2>
-                <span class="badge blue">Active</span>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>Overall Score</span><b>84%</b></div>
-                <div class="progress"><span style="width:84%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>Quality</span><b>88%</b></div>
-                <div class="progress"><span style="width:88%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>On-Time Delivery</span><b>82%</b></div>
-                <div class="progress"><span style="width:82%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>Price Competitiveness</span><b>83%</b></div>
-                <div class="progress"><span style="width:83%"></span></div>
-            </div>
-
-        </div>
-
-
-        <div class="panel">
-
-            <div class="panel-head">
-                <h2>Metro Supplies</h2>
-                <span class="badge orange">Watch</span>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>Overall Score</span><b>68%</b></div>
-                <div class="progress"><span style="width:68%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>Quality</span><b>72%</b></div>
-                <div class="progress"><span style="width:72%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>On-Time Delivery</span><b>61%</b></div>
-                <div class="progress"><span style="width:61%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top"><span>Price Competitiveness</span><b>74%</b></div>
-                <div class="progress"><span style="width:74%"></span></div>
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="panel">
-
-        <div class="panel-head">
-            <h2>Supplier Performance</h2>
-            <span class="small">Current quarter</span>
-        </div>
-
-        <div class="table-wrap">
-
-            <table>
-
-                <tr>
-                    <th>Supplier</th>
-                    <th>Orders</th>
-                    <th>On-Time Rate</th>
-                    <th>Quality</th>
-                    <th>Lead Time</th>
-                    <th>Score</th>
-                </tr>
-
-                <tr>
-                    <td>TechSource Pvt Ltd</td>
-                    <td>86</td>
-                    <td>91%</td>
-                    <td>95%</td>
-                    <td>5 days</td>
-                    <td><span class="badge green">92</span></td>
-                </tr>
-
-                <tr>
-                    <td>Global Components</td>
-                    <td>64</td>
-                    <td>82%</td>
-                    <td>88%</td>
-                    <td>7 days</td>
-                    <td><span class="badge blue">84</span></td>
-                </tr>
-
-                <tr>
-                    <td>Metro Supplies</td>
-                    <td>42</td>
-                    <td>61%</td>
-                    <td>72%</td>
-                    <td>11 days</td>
-                    <td><span class="badge orange">68</span></td>
-                </tr>
-
-            </table>
-
-        </div>
-
-    </div>
-
+  <div class="page-head"><div><h1>Supplier Management</h1><p>Evaluate suppliers using quality, delivery and price performance.</p></div><button class="btn green" onclick="recalculateSupplierScores()">⚙ Recalculate Scores</button></div>
+  <div class="grid3" id="supplierCards"></div>
+  <div class="panel">
+    <div class="panel-head"><h2>Supplier Performance</h2><button class="btn small light" onclick="openSupplierModal()">+ Add Supplier</button></div>
+    <div class="table-wrap"><table><thead><tr><th>Supplier</th><th>Orders</th><th>On-Time</th><th>Quality</th><th>Price</th><th>Lead Time</th><th>Score</th><th>Action</th></tr></thead><tbody id="supplierBody"></tbody></table></div>
+  </div>
+  <div class="panel" style="margin-top:18px"><div class="panel-head"><h2>Supplier Recommendation Engine</h2><span class="small">Weighted score = quality 40% + delivery 35% + price 25%</span></div><div id="supplierRecommendation" class="empty">Recalculate scores to generate a recommendation.</div></div>
 </section>
-
-
-<!-- ================= PROCUREMENT ================= -->
 
 <section id="procurement" class="page">
-
-    <div class="page-head">
-        <div>
-            <h1>Procurement Automation</h1>
-            <p>AI-assisted purchase recommendations based on inventory and demand.</p>
-        </div>
-
-        <button class="btn green" onclick="showToast('Procurement analysis completed')">
-            Run Procurement Analysis
-        </button>
-    </div>
-
-
-    <div class="kpis">
-
-        <div class="kpi">
-            <div class="kpi-top">Pending Recommendations <div class="kpi-icon">🛒</div></div>
-            <div class="kpi-value">12</div>
-            <div class="small">Awaiting review</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-top">Estimated Spend <div class="kpi-icon">💰</div></div>
-            <div class="kpi-value">₹4.82L</div>
-            <div class="small">Next procurement cycle</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-top">Potential Savings <div class="kpi-icon">📉</div></div>
-            <div class="kpi-value green">₹38.4K</div>
-            <div class="small">Optimization opportunity</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-top">Automation Rate <div class="kpi-icon">⚙️</div></div>
-            <div class="kpi-value">76%</div>
-            <div class="small">Process automation</div>
-        </div>
-
-    </div>
-
-
-    <div class="panel">
-
-        <div class="panel-head">
-            <h2>AI Procurement Recommendations</h2>
-            <span class="badge purple">AI Generated</span>
-        </div>
-
-
-        <div class="rec">
-
-            <div>
-                <h3>Mechanical Keyboard — Purchase 120 units</h3>
-                <p>
-                    Current stock is 15 units against a reorder point of 75.
-                    Demand velocity indicates a high stockout probability.
-                    TechSource has the best combined price and delivery score.
-                </p>
-            </div>
-
-            <div class="priority">
-                <span class="badge red">HIGH</span>
-            </div>
-
-        </div>
-
-
-        <div class="rec">
-
-            <div>
-                <h3>Webcam — Purchase 60 units</h3>
-                <p>
-                    Current stock is below the calculated reorder level.
-                    Recommended supplier: Global Components.
-                </p>
-            </div>
-
-            <div class="priority">
-                <span class="badge orange">MEDIUM</span>
-            </div>
-
-        </div>
-
-
-        <div class="rec">
-
-            <div>
-                <h3>24-inch Monitor — Hold Purchase</h3>
-                <p>
-                    Inventory exceeds projected demand. Additional procurement
-                    should be delayed to avoid excess holding cost.
-                </p>
-            </div>
-
-            <div class="priority">
-                <span class="badge green">OPTIMIZE</span>
-            </div>
-
-        </div>
-
-    </div>
-
+  <div class="page-head"><div><h1>Procurement Automation</h1><p>Generate purchase requests from inventory intelligence and move them through approval.</p></div><button class="btn green" onclick="runProcurementAnalysis()">🛒 Run Procurement Analysis</button></div>
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-top">Pending Requests <div class="kpi-icon">🛒</div></div><div class="kpi-value" id="pPending">0</div><div class="small">Awaiting approval</div></div>
+    <div class="kpi"><div class="kpi-top">Estimated Spend <div class="kpi-icon">💰</div></div><div class="kpi-value" id="pSpend">₹0</div><div class="small">Open procurement</div></div>
+    <div class="kpi"><div class="kpi-top">Approved Orders <div class="kpi-icon">✅</div></div><div class="kpi-value" id="pApproved">0</div><div class="small">Completed workflow</div></div>
+    <div class="kpi"><div class="kpi-top">Potential Savings <div class="kpi-icon">📉</div></div><div class="kpi-value up" id="pSavings">₹0</div><div class="small">Supplier optimization</div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Purchase Requests</h2><span class="badge purple">Workflow Enabled</span></div>
+    <div id="procurementList"></div>
+  </div>
+  <div class="panel" style="margin-top:18px">
+    <div class="panel-head"><h2>Approval Activity</h2></div>
+    <div id="procurementTimeline" class="timeline"></div>
+  </div>
 </section>
-
-
-<!-- ================= RISKS ================= -->
 
 <section id="risks" class="page">
-
-    <div class="page-head">
-        <div>
-            <h1>Risk & Alerts</h1>
-            <p>Identify supply-chain risks before they impact operations.</p>
-        </div>
-
-        <button class="btn" onclick="showToast('Risk scan completed')">
-            Run Risk Scan
-        </button>
-    </div>
-
-
-    <div class="grid3">
-
-        <div class="kpi">
-            <div class="kpi-top">Critical Risks <div class="kpi-icon">🔴</div></div>
-            <div class="kpi-value red">4</div>
-            <div class="small">Immediate attention</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-top">Medium Risks <div class="kpi-icon">🟠</div></div>
-            <div class="kpi-value orange">9</div>
-            <div class="small">Monitor closely</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-top">Resolved Risks <div class="kpi-icon">🟢</div></div>
-            <div class="kpi-value green">37</div>
-            <div class="small">This quarter</div>
-        </div>
-
-    </div>
-
-
-    <div class="panel">
-
-        <div class="panel-head">
-            <h2>Detected Supply Chain Risks</h2>
-            <span class="small">AI risk engine</span>
-        </div>
-
-
-        <div class="alert red">
-
-            <div class="alert-icon">🔴</div>
-
-            <div>
-                <strong>High Stockout Probability — Mechanical Keyboard</strong>
-                <p>
-                    Current stock: 15 units. Forecast demand: 65 units/month.
-                    Expected stockout window: 6–8 days.
-                </p>
-            </div>
-
-        </div>
-
-
-        <div class="alert red">
-
-            <div class="alert-icon">🚚</div>
-
-            <div>
-                <strong>Supplier Delivery Delay — Metro Supplies</strong>
-                <p>
-                    Average lead time has increased from 8 to 11 days.
-                </p>
-            </div>
-
-        </div>
-
-
-        <div class="alert">
-
-            <div class="alert-icon">📦</div>
-
-            <div>
-                <strong>Excess Inventory — 24-inch Monitor</strong>
-                <p>
-                    Inventory is approximately 2.2× projected monthly demand.
-                </p>
-            </div>
-
-        </div>
-
-
-        <div class="alert green">
-
-            <div class="alert-icon">✓</div>
-
-            <div>
-                <strong>Risk Mitigated — USB-C Hub</strong>
-                <p>
-                    Reorder completed successfully. Risk status changed to normal.
-                </p>
-            </div>
-
-        </div>
-
-    </div>
-
+  <div class="page-head"><div><h1>Risk & Alerts</h1><p>Detect stockout, overstock and supplier risks before they impact operations.</p></div><button class="btn orange" onclick="runRiskScan()">⚠ Run Risk Scan</button></div>
+  <div class="grid3">
+    <div class="kpi"><div class="kpi-top">Critical Risks <div class="kpi-icon">🔴</div></div><div class="kpi-value down" id="rCritical">0</div><div class="small">Immediate attention</div></div>
+    <div class="kpi"><div class="kpi-top">Medium Risks <div class="kpi-icon">🟠</div></div><div class="kpi-value" id="rMedium">0</div><div class="small">Monitor closely</div></div>
+    <div class="kpi"><div class="kpi-top">Resolved Risks <div class="kpi-icon">🟢</div></div><div class="kpi-value up" id="rResolved">0</div><div class="small">Demo workflow events</div></div>
+  </div>
+  <div class="panel"><div class="panel-head"><h2>Detected Supply Chain Risks</h2><span class="small">Rule-based risk engine</span></div><div id="riskList"></div></div>
 </section>
-
-
-<!-- ================= AI ================= -->
 
 <section id="ai" class="page">
-
-    <div class="page-head">
-        <div>
-            <h1>AI Decision Support</h1>
-            <p>Intelligent recommendations for supply-chain decision makers.</p>
-        </div>
-
-        <button class="btn green" onclick="generateAI()">
-            ✨ Generate Analysis
-        </button>
-    </div>
-
-
-    <div class="ai-card" style="margin-bottom:20px">
-
-        <div class="ai-label">OPTIFLOW AI ENGINE</div>
-
-        <h2>Supply Chain Decision Assistant</h2>
-
-        <p>
-            The decision engine evaluates inventory levels, demand patterns,
-            supplier performance, lead times and procurement costs to identify
-            actionable business opportunities.
-        </p>
-
-        <div class="ai-recommend">
-
-            <strong>Current Recommendation</strong>
-
-            <p style="margin-top:8px">
-                Prioritize procurement of <span>Mechanical Keyboards</span>
-                from <span>TechSource Pvt Ltd</span>.
-            </p>
-
-            <p style="margin-top:8px">
-                Expected stockout risk can be reduced by approximately
-                <span>74%</span> after replenishment.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="grid3">
-
-        <div class="panel">
-
-            <div class="panel-head">
-                <h2>📦 Inventory Decision</h2>
-            </div>
-
-            <p class="small">
-                Reduce keyboard stockout risk by replenishing 120 units.
-            </p>
-
-            <br>
-
-            <span class="badge red">HIGH PRIORITY</span>
-
-        </div>
-
-
-        <div class="panel">
-
-            <div class="panel-head">
-                <h2>🏭 Supplier Decision</h2>
-            </div>
-
-            <p class="small">
-                TechSource currently provides the strongest combined
-                delivery, quality and price score.
-            </p>
-
-            <br>
-
-            <span class="badge green">RECOMMENDED</span>
-
-        </div>
-
-
-        <div class="panel">
-
-            <div class="panel-head">
-                <h2>💰 Cost Decision</h2>
-            </div>
-
-            <p class="small">
-                Delaying monitor procurement could reduce unnecessary
-                holding costs.
-            </p>
-
-            <br>
-
-            <span class="badge blue">OPTIMIZE</span>
-
-        </div>
-
-    </div>
-
-
-    <div class="panel">
-
-        <div class="panel-head">
-            <h2>Decision Logic</h2>
-        </div>
-
-        <table>
-
-            <tr>
-                <th>Input</th>
-                <th>Analysis</th>
-                <th>Output</th>
-            </tr>
-
-            <tr>
-                <td>Current Inventory</td>
-                <td>Compared with reorder point</td>
-                <td>Stock Risk</td>
-            </tr>
-
-            <tr>
-                <td>Demand Velocity</td>
-                <td>Projected consumption</td>
-                <td>Demand Risk</td>
-            </tr>
-
-            <tr>
-                <td>Supplier Performance</td>
-                <td>Quality + delivery + price</td>
-                <td>Supplier Score</td>
-            </tr>
-
-            <tr>
-                <td>Procurement Cost</td>
-                <td>Cost optimization</td>
-                <td>Purchase Recommendation</td>
-            </tr>
-
-        </table>
-
-    </div>
-
+  <div class="page-head"><div><h1>AI Decision Support</h1><p>Explainable decision engine combining inventory, demand and supplier performance.</p></div><button class="btn green" onclick="generateAI()">✨ Generate Analysis</button></div>
+  <div class="ai-card" style="margin-bottom:18px">
+    <div class="ai-label">OPTIFLOW AI ENGINE</div><h2>Supply Chain Decision Assistant</h2>
+    <p>The local decision engine ranks the highest-risk item, calculates replenishment quantity and selects the strongest supplier using measurable business inputs.</p>
+    <div class="ai-recommend" id="aiMainResult"><strong>Run Generate Analysis</strong></div>
+  </div>
+  <div class="grid3">
+    <div class="panel"><div class="panel-head"><h2>📦 Inventory Decision</h2></div><div id="aiInventory" class="small">Waiting for analysis.</div></div>
+    <div class="panel"><div class="panel-head"><h2>🏭 Supplier Decision</h2></div><div id="aiSupplier" class="small">Waiting for analysis.</div></div>
+    <div class="panel"><div class="panel-head"><h2>💰 Cost Decision</h2></div><div id="aiCost" class="small">Waiting for analysis.</div></div>
+  </div>
+  <div class="panel" style="margin-top:18px"><div class="panel-head"><h2>Decision Logic</h2></div><table><thead><tr><th>Input</th><th>Processing</th><th>Output</th></tr></thead><tbody>
+    <tr><td>Current Inventory</td><td>Compare stock with reorder point</td><td>Stock Risk</td></tr>
+    <tr><td>Demand Velocity</td><td>Estimate two-month replenishment need</td><td>Purchase Quantity</td></tr>
+    <tr><td>Supplier Performance</td><td>40% quality + 35% delivery + 25% price</td><td>Supplier Score</td></tr>
+    <tr><td>Unit Cost</td><td>Quantity × unit cost</td><td>Estimated Spend</td></tr>
+  </tbody></table></div>
 </section>
 
-
-<!-- ================= REPORTS ================= -->
+<section id="locations" class="page">
+  <div class="page-head"><div><h1>Stock Locations & Map</h1><p>Visualize where inventory is stored and view shop/warehouse administrators.</p></div><button class="btn green" onclick="fitAllLocations()">🗺 Fit All Locations</button></div>
+  <div class="grid2">
+    <div class="panel"><div class="panel-head"><h2>Inventory Network</h2><span class="small">OpenStreetMap</span></div><div id="map"></div></div>
+    <div class="panel"><div class="panel-head"><h2>Locations</h2><button class="btn small light" onclick="openLocationModal()">+ Add Location</button></div><div id="locationList"></div></div>
+  </div>
+  <div class="panel"><div class="panel-head"><h2>Location Inventory Summary</h2></div><div class="table-wrap"><table><thead><tr><th>Location</th><th>Admin</th><th>City</th><th>SKUs</th><th>Units</th><th>Inventory Value</th></tr></thead><tbody id="locationSummary"></tbody></table></div></div>
+</section>
 
 <section id="reports" class="page">
-
-    <div class="page-head">
-
-        <div>
-            <h1>Reports & Analytics</h1>
-            <p>Business intelligence for strategic supply-chain decisions.</p>
-        </div>
-
-        <button class="btn green" onclick="showToast('Report generated successfully')">
-            ⬇ Generate Report
-        </button>
-
-    </div>
-
-
-    <div class="grid2">
-
-        <div class="panel">
-
-            <div class="panel-head">
-                <h2>Monthly Procurement Trend</h2>
-                <span class="small">₹ Lakhs</span>
-            </div>
-
-            <div class="chart">
-                <div class="bar" style="height:42%"><b>4.2</b><span>Apr</span></div>
-                <div class="bar" style="height:55%"><b>5.5</b><span>May</span></div>
-                <div class="bar" style="height:48%"><b>4.8</b><span>Jun</span></div>
-                <div class="bar" style="height:69%"><b>6.9</b><span>Jul</span></div>
-                <div class="bar" style="height:62%"><b>6.2</b><span>Aug</span></div>
-                <div class="bar" style="height:84%"><b>8.4</b><span>Sep</span></div>
-            </div>
-
-        </div>
-
-
-        <div class="panel">
-
-            <div class="panel-head">
-                <h2>Operational KPIs</h2>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top">
-                    <span>Inventory Accuracy</span>
-                    <b>96.8%</b>
-                </div>
-                <div class="progress"><span style="width:96.8%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top">
-                    <span>Supplier Reliability</span>
-                    <b>91%</b>
-                </div>
-                <div class="progress"><span style="width:91%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top">
-                    <span>Procurement Automation</span>
-                    <b>76%</b>
-                </div>
-                <div class="progress"><span style="width:76%"></span></div>
-            </div>
-
-            <div class="score-row">
-                <div class="score-top">
-                    <span>Risk Resolution</span>
-                    <b>89%</b>
-                </div>
-                <div class="progress"><span style="width:89%"></span></div>
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="panel">
-
-        <div class="panel-head">
-            <h2>Executive Summary</h2>
-            <span class="badge purple">AI Assisted</span>
-        </div>
-
-        <table>
-
-            <tr>
-                <th>Metric</th>
-                <th>Current</th>
-                <th>Previous</th>
-                <th>Trend</th>
-            </tr>
-
-            <tr>
-                <td>Inventory Value</td>
-                <td>₹12.8L</td>
-                <td>₹11.8L</td>
-                <td><span class="badge blue">+8.4%</span></td>
-            </tr>
-
-            <tr>
-                <td>Supplier Performance</td>
-                <td>91%</td>
-                <td>87.8%</td>
-                <td><span class="badge green">+3.2%</span></td>
-            </tr>
-
-            <tr>
-                <td>Low Stock Items</td>
-                <td>18</td>
-                <td>14</td>
-                <td><span class="badge red">+4</span></td>
-            </tr>
-
-            <tr>
-                <td>Potential Savings</td>
-                <td>₹38.4K</td>
-                <td>₹27.2K</td>
-                <td><span class="badge green">+41%</span></td>
-            </tr>
-
-        </table>
-
-    </div>
-
+  <div class="page-head"><div><h1>Reports & Analytics</h1><p>Generate an executive summary from the current working dataset.</p></div><button class="btn green" onclick="generateReport()">⬇ Generate Report</button></div>
+  <div class="grid2"><div class="panel"><div class="panel-head"><h2>Monthly Procurement Trend</h2><span class="small">Demo trend</span></div><div class="chart" id="reportChart"></div></div>
+  <div class="panel"><div class="panel-head"><h2>Operational KPIs</h2></div><div id="reportKPIs"></div></div></div>
+  <div class="panel"><div class="panel-head"><h2>Executive Summary</h2><span class="badge purple">Live</span></div><div id="reportSummary" class="empty">Click Generate Report.</div></div>
 </section>
 
+<div class="footer">OPTIFLOW 360 © 2026 · AI-Powered Enterprise Supply Chain Intelligence · Procurement Automation & Business Decision Support</div>
+</main></div>
 
-<div class="footer">
-    OPTIFLOW 360 © 2026 · AI-Powered Enterprise Supply Chain Intelligence · Procurement Automation & Business Decision Support
-</div>
+<!-- Admin modal -->
+<div class="modal-backdrop" id="adminModal"><div class="modal">
+  <div class="modal-head"><h2>⚙️ Admin / Shop Profile</h2><button class="close" onclick="closeModal('adminModal')">×</button></div>
+  <div class="form-grid">
+    <div class="form-group"><label>Admin Name</label><input id="adminName" class="field"></div>
+    <div class="form-group"><label>Shop / Company</label><input id="adminShop" class="field"></div>
+    <div class="form-group"><label>Email</label><input id="adminEmail" class="field"></div>
+    <div class="form-group"><label>Phone</label><input id="adminPhone" class="field"></div>
+  </div>
+  <div class="action-row"><button class="btn green" onclick="saveAdmin()">Save Profile</button></div>
+</div></div>
 
-</main>
-</div>
+<!-- Supplier modal -->
+<div class="modal-backdrop" id="supplierModal"><div class="modal">
+  <div class="modal-head"><h2>🏭 Add Supplier</h2><button class="close" onclick="closeModal('supplierModal')">×</button></div>
+  <div class="form-grid">
+    <div class="form-group"><label>Supplier Name</label><input id="sName" class="field"></div>
+    <div class="form-group"><label>Quality %</label><input id="sQuality" class="field" type="number" min="0" max="100"></div>
+    <div class="form-group"><label>On-Time Delivery %</label><input id="sDelivery" class="field" type="number" min="0" max="100"></div>
+    <div class="form-group"><label>Price Competitiveness %</label><input id="sPrice" class="field" type="number" min="0" max="100"></div>
+    <div class="form-group"><label>Lead Time (days)</label><input id="sLead" class="field" type="number" min="1"></div>
+    <div class="form-group"><label>Orders</label><input id="sOrders" class="field" type="number" min="0"></div>
+  </div>
+  <div class="action-row"><button class="btn green" onclick="saveSupplier()">Add Supplier</button></div>
+</div></div>
 
+<!-- Location modal -->
+<div class="modal-backdrop" id="locationModal"><div class="modal">
+  <div class="modal-head"><h2>📍 Add Stock Location</h2><button class="close" onclick="closeModal('locationModal')">×</button></div>
+  <div class="form-grid">
+    <div class="form-group"><label>Location Name</label><input id="lName" class="field" placeholder="Main Warehouse"></div>
+    <div class="form-group"><label>Admin Name</label><input id="lAdmin" class="field" placeholder="Manager Name"></div>
+    <div class="form-group"><label>City</label><input id="lCity" class="field" placeholder="Chennai"></div>
+    <div class="form-group"><label>Latitude</label><input id="lLat" class="field" type="number" step="any" placeholder="13.0827"></div>
+    <div class="form-group"><label>Longitude</label><input id="lLng" class="field" type="number" step="any" placeholder="80.2707"></div>
+  </div>
+  <p class="small" style="margin-top:10px">Use public/business location coordinates. The map uses OpenStreetMap tiles through Leaflet.</p>
+  <div class="action-row"><button class="btn green" onclick="saveLocation()">Add Location</button></div>
+</div></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+ integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+ crossorigin=""></script>
 
 <script>
+/* =========================================================
+   OPTIFLOW 360 - COMPLETE WORKING FRONTEND MODEL
+   Data is stored in browser localStorage.
+   ========================================================= */
 
-/* ===============================
-   OPTIFLOW 360 - APPLICATION LOGIC
-   =============================== */
+const STORAGE_KEY = "optiflow360_state_v3";
 
+const defaultState = {
+  admin:{name:"Guru Priya",shop:"OPTIFLOW Demo Store",email:"admin@optiflow360.local",phone:"+91 90000 00000"},
+  inventory:[
+    {id:1,product:"Laptop Stand",category:"Accessories",stock:18,demand:50,reorderPoint:70,unitCost:1200,locationId:1,supplierId:1},
+    {id:2,product:"Wireless Mouse",category:"Peripherals",stock:124,demand:80,reorderPoint:60,unitCost:650,locationId:1,supplierId:2},
+    {id:3,product:"Mechanical Keyboard",category:"Peripherals",stock:15,demand:65,reorderPoint:75,unitCost:2400,locationId:2,supplierId:1},
+    {id:4,product:"24-inch Monitor",category:"Displays",stock:90,demand:40,reorderPoint:35,unitCost:11500,locationId:2,supplierId:3},
+    {id:5,product:"USB-C Hub",category:"Accessories",stock:62,demand:55,reorderPoint:50,unitCost:1800,locationId:3,supplierId:2},
+    {id:6,product:"Webcam",category:"Electronics",stock:42,demand:48,reorderPoint:55,unitCost:3200,locationId:3,supplierId:2}
+  ],
+  suppliers:[
+    {id:1,name:"TechSource Pvt Ltd",quality:95,delivery:91,price:89,lead:5,orders:86},
+    {id:2,name:"Global Components",quality:88,delivery:82,price:83,lead:7,orders:64},
+    {id:3,name:"Metro Supplies",quality:72,delivery:61,price:74,lead:11,orders:42}
+  ],
+  locations:[
+    {id:1,name:"Central Warehouse",admin:"Arun Kumar",city:"Chennai",lat:13.0827,lng:80.2707},
+    {id:2,name:"Puducherry Distribution Hub",admin:"Priya Menon",city:"Puducherry",lat:11.9416,lng:79.8083},
+    {id:3,name:"Bengaluru Retail Store",admin:"Rahul Sharma",city:"Bengaluru",lat:12.9716,lng:77.5946}
+  ],
+  procurement:[],
+  activity:[],
+  resolvedRisks:0
+};
 
-/* ---------- PAGE NAVIGATION ---------- */
+let state = loadState();
+let map = null;
+let markers = [];
 
-function showPage(pageId, element) {
+function loadState(){
+  try{
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(saved) return saved;
+  }catch(e){}
+  return JSON.parse(JSON.stringify(defaultState));
+}
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+function nextId(arr){return arr.length ? Math.max(...arr.map(x=>Number(x.id)||0))+1 : 1}
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function toast(msg){
+  document.querySelectorAll(".toast").forEach(x=>x.remove());
+  const el=document.createElement("div");el.className="toast";el.textContent="✓ "+msg;document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2800);
+}
+function statusOf(item){
+  if(item.stock < item.reorderPoint*0.5) return ["Critical","red"];
+  if(item.stock < item.reorderPoint) return ["Reorder","orange"];
+  if(item.stock > item.demand*2) return ["Overstock","orange"];
+  return ["Healthy","green"];
+}
+function supplierScore(s){return Math.round(s.quality*.40+s.delivery*.35+s.price*.25)}
+function supplierById(id){return state.suppliers.find(s=>Number(s.id)===Number(id))}
+function locationById(id){return state.locations.find(l=>Number(l.id)===Number(id))}
+function showPage(id,el){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id)?.classList.add("active");
+  document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
+  if(el) el.classList.add("active");
+  if(id==="locations"){setTimeout(initMap,100)}
+  refreshAll();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
 
-    document.querySelectorAll(".page").forEach(function(page) {
-        page.classList.remove("active");
+/* ---------------- INVENTORY ---------------- */
+function addNewProduct(){
+  const product=document.getElementById("newProductName").value.trim();
+  const category=document.getElementById("newProductCategory").value.trim();
+  const stock=Number(document.getElementById("newProductStock").value);
+  const demand=Number(document.getElementById("newProductDemand").value);
+  const reorderPoint=Number(document.getElementById("newProductReorder").value);
+  const unitCost=Number(document.getElementById("newProductCost").value);
+  const locationId=Number(document.getElementById("newProductLocation").value);
+  const supplierId=Number(document.getElementById("newProductSupplier").value);
+
+  if(!product||!category||stock<0||!demand||!reorderPoint||!unitCost||!locationId||!supplierId){
+    alert("Please complete all product fields.");
+    return;
+  }
+  state.inventory.push({id:nextId(state.inventory),product,category,stock,demand,reorderPoint,unitCost,locationId,supplierId});
+  saveState();clearProductForm();refreshAll();
+  toast(product+" added to live inventory");
+}
+function clearProductForm(){
+  ["newProductName","newProductCategory","newProductStock","newProductDemand","newProductReorder","newProductCost"].forEach(id=>document.getElementById(id).value="");
+}
+function deleteProduct(id){
+  const p=state.inventory.find(x=>x.id===id);
+  if(!p)return;
+  if(!confirm("Remove "+p.product+" from inventory?"))return;
+  state.inventory=state.inventory.filter(x=>x.id!==id);saveState();refreshAll();toast("Product removed");
+}
+function filterInventory(){
+  const q=document.getElementById("inventorySearch").value.toLowerCase();
+  document.querySelectorAll("#inventoryBody tr").forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?"":"none");
+}
+function renderInventory(){
+  const counts=analyzeInventory();
+  document.getElementById("iTotal").textContent=state.inventory.length;
+  document.getElementById("iLow").textContent=counts.critical+counts.reorder;
+  document.getElementById("iOver").textContent=counts.overstock;
+  const body=document.getElementById("inventoryBody");
+  body.innerHTML="";
+  state.inventory.forEach(item=>{
+    const [status,cls]=statusOf(item), loc=locationById(item.locationId);
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td><b>${esc(item.product)}</b></td><td>${esc(item.category)}</td><td>${item.stock}</td><td>${item.demand}</td><td>${item.reorderPoint}</td><td>${money(item.unitCost)}</td><td>${loc?esc(loc.name):"—"}</td><td><span class="badge ${cls}">${status}</span></td><td><button class="btn small light" onclick="deleteProduct(${item.id})">Delete</button></td>`;
+    body.appendChild(tr);
+  });
+}
+function analyzeInventory(){
+  const out={critical:0,reorder:0,overstock:0,healthy:0};
+  state.inventory.forEach(i=>{const s=statusOf(i)[0];out[s.toLowerCase()]++});
+  return out;
+}
+function runInventoryAnalysis(){
+  const c=analyzeInventory();
+  const needs=state.inventory.filter(i=>i.stock<i.reorderPoint);
+  let html=`<div class="grid3">
+    <div><b>${c.critical}</b><div class="small">Critical</div></div>
+    <div><b>${c.reorder}</b><div class="small">Reorder</div></div>
+    <div><b>${c.overstock}</b><div class="small">Overstock</div></div></div>`;
+  if(!needs.length){html+=`<div class="alert green" style="margin-top:14px"><div>✓</div><div><strong>No immediate replenishment required.</strong><p>All products are at or above their reorder point.</p></div></div>`}
+  else{
+    html+=`<div style="margin-top:15px"><b>Replenishment Recommendations</b></div>`;
+    needs.forEach(i=>{
+      const qty=Math.max(10,Math.ceil(i.demand*2-i.stock));
+      html+=`<div class="rec" style="margin-top:10px"><div><h3>${esc(i.product)}</h3><p>Stock ${i.stock} vs reorder point ${i.reorderPoint}. Recommended purchase: <b>${qty} units</b>. Estimated cost: <b>${money(qty*i.unitCost)}</b>.</p></div><span class="badge red">ACTION</span></div>`;
     });
+  }
+  document.getElementById("inventoryAnalysisResult").innerHTML=html;
+  toast("Inventory analysis completed");
+  refreshDashboard();
+}
 
-    const selectedPage = document.getElementById(pageId);
+/* ---------------- SUPPLIERS ---------------- */
+function recalculateSupplierScores(){
+  const ranked=[...state.suppliers].sort((a,b)=>supplierScore(b)-supplierScore(a));
+  const best=ranked[0];
+  document.getElementById("supplierRecommendation").innerHTML=`<div class="alert green"><div>🏆</div><div><strong>${esc(best.name)} is the current recommended supplier</strong><p>Weighted score: ${supplierScore(best)}%. Quality ${best.quality}%, delivery ${best.delivery}%, price competitiveness ${best.price}%.</p></div></div>`;
+  renderSuppliers();toast("Supplier scores recalculated");
+}
+function renderSuppliers(){
+  const cards=document.getElementById("supplierCards");cards.innerHTML="";
+  state.suppliers.forEach(s=>{
+    const score=supplierScore(s);
+    const cls=score>=85?"green":score>=75?"blue":"orange";
+    cards.innerHTML+=`<div class="panel"><div class="panel-head"><h2>${esc(s.name)}</h2><span class="badge ${cls}">${score}%</span></div>
+      <div class="score-row"><div class="score-top"><span>Overall Score</span><b>${score}%</b></div><div class="progress"><span style="width:${score}%"></span></div></div>
+      <div class="score-row"><div class="score-top"><span>Quality</span><b>${s.quality}%</b></div><div class="progress"><span style="width:${s.quality}%"></span></div></div>
+      <div class="score-row"><div class="score-top"><span>On-Time Delivery</span><b>${s.delivery}%</b></div><div class="progress"><span style="width:${s.delivery}%"></span></div></div>
+      <div class="score-row"><div class="score-top"><span>Price Competitiveness</span><b>${s.price}%</b></div><div class="progress"><span style="width:${s.price}%"></span></div></div>
+      <div class="small">Lead time: ${s.lead} days · Orders: ${s.orders}</div></div>`;
+  });
+  const body=document.getElementById("supplierBody");body.innerHTML="";
+  state.suppliers.forEach(s=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${esc(s.name)}</td><td>${s.orders}</td><td>${s.delivery}%</td><td>${s.quality}%</td><td>${s.price}%</td><td>${s.lead} days</td><td><span class="badge ${supplierScore(s)>=85?"green":supplierScore(s)>=75?"blue":"orange"}">${supplierScore(s)}</span></td><td><button class="btn small light" onclick="deleteSupplier(${s.id})">Delete</button></td>`;
+    body.appendChild(tr);
+  });
+}
+function openSupplierModal(){document.getElementById("supplierModal").classList.add("show")}
+function saveSupplier(){
+  const name=document.getElementById("sName").value.trim(),quality=Number(document.getElementById("sQuality").value),delivery=Number(document.getElementById("sDelivery").value),price=Number(document.getElementById("sPrice").value),lead=Number(document.getElementById("sLead").value),orders=Number(document.getElementById("sOrders").value);
+  if(!name||[quality,delivery,price,lead,orders].some(v=>Number.isNaN(v))){alert("Complete supplier fields.");return}
+  state.suppliers.push({id:nextId(state.suppliers),name,quality,delivery,price,lead,orders});saveState();closeModal("supplierModal");refreshAll();toast(name+" added");
+}
+function deleteSupplier(id){
+  if(state.inventory.some(i=>i.supplierId===id)){alert("This supplier is linked to inventory. Reassign products before deleting.");return}
+  state.suppliers=state.suppliers.filter(s=>s.id!==id);saveState();refreshAll();
+}
 
-    if (selectedPage) {
-        selectedPage.classList.add("active");
-    }
+/* ---------------- PROCUREMENT ---------------- */
+function runProcurementAnalysis(){
+  const best=[...state.suppliers].sort((a,b)=>supplierScore(b)-supplierScore(a))[0];
+  const needs=state.inventory.filter(i=>i.stock<i.reorderPoint);
+  let added=0;
+  needs.forEach(i=>{
+    const existing=state.procurement.find(p=>p.productId===i.id&&p.status==="Pending");
+    if(existing)return;
+    const qty=Math.max(10,Math.ceil(i.demand*2-i.stock));
+    const cost=qty*i.unitCost;
+    state.procurement.push({id:nextId(state.procurement),productId:i.id,product:i.product,quantity:qty,cost,supplierId:best?best.id:null,status:"Pending",created:new Date().toLocaleString("en-IN")});
+    state.activity.unshift({time:new Date().toLocaleString("en-IN"),text:"Purchase request generated for "+i.product});
+    added++;
+  });
+  saveState();refreshAll();toast(added?added+" procurement request(s) generated":"No new procurement requests needed");
+}
+function approveProcurement(id){
+  const p=state.procurement.find(x=>x.id===id);if(!p)return;
+  p.status="Approved";p.approvedAt=new Date().toLocaleString("en-IN");
+  const item=state.inventory.find(i=>i.id===p.productId);
+  if(item)item.stock+=p.quantity;
+  state.activity.unshift({time:p.approvedAt,text:"Purchase approved: "+p.product+" · "+p.quantity+" units"});
+  saveState();refreshAll();toast(p.product+" purchase approved");
+}
+function rejectProcurement(id){
+  const p=state.procurement.find(x=>x.id===id);if(!p)return;
+  p.status="Rejected";p.rejectedAt=new Date().toLocaleString("en-IN");
+  state.activity.unshift({time:p.rejectedAt,text:"Purchase rejected: "+p.product});
+  saveState();refreshAll();toast("Purchase request rejected");
+}
+function renderProcurement(){
+  const pending=state.procurement.filter(p=>p.status==="Pending"),approved=state.procurement.filter(p=>p.status==="Approved");
+  document.getElementById("pPending").textContent=pending.length;
+  document.getElementById("pApproved").textContent=approved.length;
+  document.getElementById("pSpend").textContent=money(pending.reduce((a,p)=>a+p.cost,0));
+  const savings=Math.round(pending.reduce((a,p)=>a+p.cost,0)*.08);
+  document.getElementById("pSavings").textContent=money(savings);
+  const list=document.getElementById("procurementList");list.innerHTML="";
+  if(!state.procurement.length){list.innerHTML=`<div class="empty">Run Procurement Analysis to generate purchase requests.</div>`}
+  state.procurement.slice().reverse().forEach(p=>{
+    const s=supplierById(p.supplierId);
+    const cls=p.status==="Approved"?"green":p.status==="Rejected"?"red":"orange";
+    list.innerHTML+=`<div class="rec"><div><h3>${esc(p.product)} — Purchase ${p.quantity} units</h3><p>Supplier: <b>${s?esc(s.name):"Unassigned"}</b> · Estimated cost: <b>${money(p.cost)}</b> · Created: ${p.created}</p></div><div class="priority"><span class="badge ${cls}">${p.status}</span>${p.status==="Pending"?`<div class="action-row"><button class="btn small green" onclick="approveProcurement(${p.id})">Approve</button><button class="btn small red" onclick="rejectProcurement(${p.id})">Reject</button></div>`:""}</div></div>`;
+  });
+  document.getElementById("procurementTimeline").innerHTML=state.activity.slice(0,8).map(a=>`<div class="timeline-item"><strong>${esc(a.text)}</strong><p>${a.time}</p></div>`).join("")||`<div class="empty">No workflow activity yet.</div>`;
+}
 
-    document.querySelectorAll(".nav").forEach(function(nav) {
-        nav.classList.remove("active");
+/* ---------------- RISK ---------------- */
+function runRiskScan(){
+  const risks=[];
+  state.inventory.forEach(i=>{
+    const [status]=statusOf(i);
+    const supplier=supplierById(i.supplierId);
+    if(status==="Critical") risks.push({level:"Critical",icon:"🔴",title:"High Stockout Risk — "+i.product,text:`Current stock ${i.stock}; demand ${i.demand}/month. Reorder point ${i.reorderPoint}.`});
+    else if(status==="Reorder") risks.push({level:"Medium",icon:"🟠",title:"Reorder Required — "+i.product,text:`Stock ${i.stock} is below reorder point ${i.reorderPoint}.`});
+    else if(status==="Overstock") risks.push({level:"Medium",icon:"📦",title:"Excess Inventory — "+i.product,text:`Stock is ${i.stock}, more than 2× monthly demand ${i.demand}.`});
+    if(supplier&&supplier.delivery<70) risks.push({level:"Critical",icon:"🚚",title:"Supplier Delivery Risk — "+supplier.name,text:`On-time delivery is only ${supplier.delivery}% for ${i.product}.`});
+  });
+  renderRisks(risks);toast("Risk scan completed");
+}
+function renderRisks(risks=null){
+  if(risks===null){
+    risks=[];
+    state.inventory.forEach(i=>{
+      const [status]=statusOf(i),s=supplierById(i.supplierId);
+      if(status==="Critical")risks.push({level:"Critical",icon:"🔴",title:"High Stockout Risk — "+i.product,text:`Stock ${i.stock} vs demand ${i.demand}.`});
+      else if(status==="Reorder")risks.push({level:"Medium",icon:"🟠",title:"Reorder Required — "+i.product,text:`Stock ${i.stock} is below reorder point ${i.reorderPoint}.`});
+      else if(status==="Overstock")risks.push({level:"Medium",icon:"📦",title:"Excess Inventory — "+i.product,text:`Stock ${i.stock} vs demand ${i.demand}.`});
+      if(s&&s.delivery<70)risks.push({level:"Critical",icon:"🚚",title:"Supplier Delivery Risk — "+s.name,text:`On-time delivery ${s.delivery}%.`});
     });
-
-    if (element) {
-        element.classList.add("active");
-    }
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+  }
+  const critical=risks.filter(r=>r.level==="Critical").length,medium=risks.filter(r=>r.level==="Medium").length;
+  document.getElementById("rCritical").textContent=critical;document.getElementById("rMedium").textContent=medium;document.getElementById("rResolved").textContent=state.resolvedRisks;
+  document.getElementById("riskList").innerHTML=risks.length?risks.map(r=>`<div class="alert ${r.level==="Critical"?"red":""}"><div>${r.icon}</div><div><strong>${esc(r.title)}</strong><p>${esc(r.text)}</p></div></div>`).join(""):`<div class="alert green"><div>✓</div><div><strong>No active inventory risks detected</strong><p>Current inventory is within configured thresholds.</p></div></div>`;
 }
 
-
-/* ---------- TOAST MESSAGE ---------- */
-
-function showToast(message) {
-
-    const oldToast = document.querySelector(".optiflow-toast");
-
-    if (oldToast) {
-        oldToast.remove();
-    }
-
-    const toast = document.createElement("div");
-
-    toast.className = "optiflow-toast";
-    toast.innerText = "✓  " + message;
-
-    toast.style.position = "fixed";
-    toast.style.right = "25px";
-    toast.style.bottom = "25px";
-    toast.style.background = "#0b1220";
-    toast.style.color = "white";
-    toast.style.padding = "14px 20px";
-    toast.style.borderRadius = "9px";
-    toast.style.zIndex = "9999";
-    toast.style.boxShadow = "0 8px 30px rgba(0,0,0,.25)";
-    toast.style.fontSize = "13px";
-
-    document.body.appendChild(toast);
-
-    setTimeout(function() {
-
-        if (toast) {
-            toast.remove();
-        }
-
-    }, 2500);
+/* ---------------- AI ---------------- */
+function generateAI(){
+  if(!state.inventory.length){return}
+  const ranked=state.inventory.map(i=>({...i,risk:i.demand/Math.max(i.stock,1)})).sort((a,b)=>b.risk-a.risk);
+  const item=ranked[0];
+  const supplier=[...state.suppliers].sort((a,b)=>supplierScore(b)-supplierScore(a))[0];
+  const qty=Math.max(10,Math.ceil(item.demand*2-item.stock)),cost=qty*item.unitCost;
+  const score=supplier?supplierScore(supplier):0;
+  const reason=item.stock<item.reorderPoint?"stock is below reorder point":"demand-to-stock ratio is high";
+  document.getElementById("aiMainResult").innerHTML=`<strong>Priority: ${esc(item.product)}</strong><p style="margin-top:8px">Recommend purchasing <span>${qty} units</span> from <span>${supplier?esc(supplier.name):"approved supplier"}</span>.</p><p style="margin-top:6px">Estimated spend: <span>${money(cost)}</span> · Supplier score: <span>${score}%</span>.</p><p style="margin-top:6px">Reason: ${reason}.</p>`;
+  document.getElementById("aiInventory").innerHTML=`<b>${esc(item.product)}</b><br>Stock ${item.stock} · Demand ${item.demand}/month · Reorder ${item.reorderPoint}<br><br><span class="badge red">HIGH PRIORITY</span>`;
+  document.getElementById("aiSupplier").innerHTML=`<b>${supplier?esc(supplier.name):"None"}</b><br>Weighted score ${score}%<br>Quality ${supplier?.quality||0}% · Delivery ${supplier?.delivery||0}% · Price ${supplier?.price||0}%`;
+  document.getElementById("aiCost").innerHTML=`Purchase ${qty} units × ${money(item.unitCost)}<br><br><b>${money(cost)}</b> estimated procurement spend`;
+  document.getElementById("dashboardAIText").textContent=`The highest-risk item is ${item.product}. The engine recommends replenishment using current stock, demand and supplier score.`;
+  document.getElementById("dashboardAIBox").innerHTML=`<strong>Purchase ${qty} ${esc(item.product)} units</strong><p style="margin-top:7px">Suggested supplier: <span>${supplier?esc(supplier.name):"—"}</span></p><p style="margin-top:5px">Estimated cost: <span>${money(cost)}</span></p>`;
+  toast("AI decision generated");
 }
 
-
-/* ---------- INVENTORY DATA ---------- */
-
-const inventoryData = [
-
-    {
-        product: "Laptop Stand",
-        category: "Accessories",
-        stock: 18,
-        demand: 50,
-        reorderPoint: 70,
-        unitCost: 1200
-    },
-
-    {
-        product: "Wireless Mouse",
-        category: "Peripherals",
-        stock: 124,
-        demand: 80,
-        reorderPoint: 60,
-        unitCost: 650
-    },
-
-    {
-        product: "Mechanical Keyboard",
-        category: "Peripherals",
-        stock: 15,
-        demand: 65,
-        reorderPoint: 75,
-        unitCost: 2400
-    },
-
-    {
-        product: "24-inch Monitor",
-        category: "Displays",
-        stock: 90,
-        demand: 40,
-        reorderPoint: 35,
-        unitCost: 11500
-    },
-
-    {
-        product: "USB-C Hub",
-        category: "Accessories",
-        stock: 62,
-        demand: 55,
-        reorderPoint: 50,
-        unitCost: 1800
-    },
-
-    {
-        product: "Webcam",
-        category: "Electronics",
-        stock: 42,
-        demand: 48,
-        reorderPoint: 55,
-        unitCost: 3200
-    }
-
-];
-
-
-/* ---------- INVENTORY ANALYSIS ---------- */
-
-function analyzeInventory() {
-
-    let critical = 0;
-    let reorder = 0;
-    let overstock = 0;
-    let healthy = 0;
-
-    inventoryData.forEach(function(item) {
-
-        if (item.stock < item.reorderPoint * 0.5) {
-
-            critical++;
-
-        } else if (item.stock < item.reorderPoint) {
-
-            reorder++;
-
-        } else if (item.stock > item.demand * 2) {
-
-            overstock++;
-
-        } else {
-
-            healthy++;
-
-        }
-
-    });
-
-    return {
-        critical: critical,
-        reorder: reorder,
-        overstock: overstock,
-        healthy: healthy
-    };
+/* ---------------- LOCATIONS / MAP ---------------- */
+function populateLocationSelects(){
+  const l=document.getElementById("newProductLocation"),s=document.getElementById("newProductSupplier");
+  l.innerHTML=state.locations.map(x=>`<option value="${x.id}">${esc(x.name)} — ${esc(x.city)}</option>`).join("");
+  s.innerHTML=state.suppliers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");
+}
+function initMap(){
+  if(typeof L==="undefined")return;
+  if(!map){
+    map=L.map("map").setView([13.0827,80.2707],6);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"}).addTo(map);
+  }
+  markers.forEach(m=>m.remove());markers=[];
+  state.locations.forEach(loc=>{
+    const inv=state.inventory.filter(i=>i.locationId===loc.id);
+    const units=inv.reduce((a,i)=>a+i.stock,0),value=inv.reduce((a,i)=>a+i.stock*i.unitCost,0);
+    const marker=L.marker([loc.lat,loc.lng]).addTo(map).bindPopup(`<b>${esc(loc.name)}</b><br>Admin: ${esc(loc.admin)}<br>City: ${esc(loc.city)}<br>SKUs: ${inv.length}<br>Units: ${units}<br>Inventory value: ${money(value)}`);
+    markers.push(marker);
+  });
+  fitAllLocations();
+}
+function fitAllLocations(){
+  if(!map||!state.locations.length)return;
+  const bounds=L.latLngBounds(state.locations.map(x=>[x.lat,x.lng]));
+  map.fitBounds(bounds,{padding:[25,25]});
+}
+function renderLocations(){
+  document.getElementById("locationList").innerHTML=state.locations.map(l=>{
+    const inv=state.inventory.filter(i=>i.locationId===l.id),units=inv.reduce((a,i)=>a+i.stock,0);
+    return `<div class="location-card"><div><strong>📍 ${esc(l.name)}</strong><p>${esc(l.city)} · Admin: ${esc(l.admin)} · ${inv.length} SKUs · ${units} units</p></div><button class="btn small light" onclick="focusLocation(${l.id})">View</button></div>`;
+  }).join("");
+  document.getElementById("locationSummary").innerHTML=state.locations.map(l=>{
+    const inv=state.inventory.filter(i=>i.locationId===l.id),units=inv.reduce((a,i)=>a+i.stock,0),value=inv.reduce((a,i)=>a+i.stock*i.unitCost,0);
+    return `<tr><td>${esc(l.name)}</td><td>${esc(l.admin)}</td><td>${esc(l.city)}</td><td>${inv.length}</td><td>${units}</td><td>${money(value)}</td></tr>`;
+  }).join("");
+}
+function focusLocation(id){
+  const l=locationById(id);if(!l)return;
+  showPage("locations",document.querySelectorAll(".nav")[6]);
+  setTimeout(()=>{if(map){map.setView([l.lat,l.lng],13);markers.find(m=>m.getLatLng().lat===l.lat&&m.getLatLng().lng===l.lng)?.openPopup()}},120);
+}
+function openLocationModal(){document.getElementById("locationModal").classList.add("show")}
+function saveLocation(){
+  const name=document.getElementById("lName").value.trim(),admin=document.getElementById("lAdmin").value.trim(),city=document.getElementById("lCity").value.trim(),lat=Number(document.getElementById("lLat").value),lng=Number(document.getElementById("lLng").value);
+  if(!name||!admin||!city||!Number.isFinite(lat)||!Number.isFinite(lng)){alert("Complete location fields.");return}
+  state.locations.push({id:nextId(state.locations),name,admin,city,lat,lng});saveState();closeModal("locationModal");refreshAll();setTimeout(initMap,100);toast(name+" added to network");
 }
 
-
-/* ---------- REFRESH DATA ---------- */
-
-function refreshData() {
-
-    showToast("Supply-chain data refreshed");
-
-    const analysis = analyzeInventory();
-
-    setTimeout(function() {
-
-        const dashboardLowStock =
-            document.querySelector("#dashboard .kpi-value.red");
-
-        if (dashboardLowStock) {
-
-            dashboardLowStock.innerText =
-                analysis.critical + analysis.reorder;
-
-        }
-
-        const inventoryLowStock =
-            document.querySelector("#inventory .kpi-value.red");
-
-        if (inventoryLowStock) {
-
-            inventoryLowStock.innerText =
-                analysis.critical + analysis.reorder;
-
-        }
-
-    }, 500);
+/* ---------------- REPORTS / DASHBOARD ---------------- */
+function refreshDashboard(){
+  const value=state.inventory.reduce((a,i)=>a+i.stock*i.unitCost,0),counts=analyzeInventory();
+  document.getElementById("kInventoryValue").textContent=money(value);
+  document.getElementById("kProducts").textContent=state.inventory.length;
+  document.getElementById("kLow").textContent=counts.critical+counts.reorder;
+  const avg=state.suppliers.length?Math.round(state.suppliers.reduce((a,s)=>a+supplierScore(s),0)/state.suppliers.length):0;
+  document.getElementById("kSupplier").textContent=avg+"%";
+  document.getElementById("alertCount").textContent=(counts.critical+counts.reorder)+" Active";
+  document.getElementById("dashboardInventory").innerHTML=state.inventory.slice(0,7).map(i=>{const [st,cl]=statusOf(i);return `<tr><td>${esc(i.product)}</td><td>${i.stock}</td><td>${i.demand}</td><td><span class="badge ${cl}">${st}</span></td></tr>`}).join("");
+  const risks=state.inventory.filter(i=>statusOf(i)[0]!=="Healthy").slice(0,4);
+  document.getElementById("dashboardAlerts").innerHTML=risks.length?risks.map(i=>{const [st,cl]=statusOf(i);return `<div class="alert ${cl==="red"?"red":""}"><div>${cl==="red"?"🔴":"🟠"}</div><div><strong>${st} — ${esc(i.product)}</strong><p>Stock ${i.stock} vs reorder ${i.reorderPoint}.</p></div></div>`}).join(""):`<div class="alert green"><div>✓</div><div><strong>No immediate inventory alert</strong><p>All current products are healthy.</p></div></div>`;
+  renderChart("spendChart",[4.2,5.5,4.8,6.9,6.2,8.4],["Apr","May","Jun","Jul","Aug","Sep"]);
+}
+function renderChart(id,values,labels){
+  const el=document.getElementById(id);if(!el)return;const max=Math.max(...values,1);
+  el.innerHTML=values.map((v,i)=>`<div class="bar" style="height:${Math.max(12,v/max*88)}%"><b>${v}L</b><span>${labels[i]}</span></div>`).join("");
+}
+function refreshReport(){
+  renderChart("reportChart",[4.2,5.5,4.8,6.9,6.2,8.4],["Apr","May","Jun","Jul","Aug","Sep"]);
+  const c=analyzeInventory(),avg=state.suppliers.length?Math.round(state.suppliers.reduce((a,s)=>a+supplierScore(s),0)/state.suppliers.length):0;
+  document.getElementById("reportKPIs").innerHTML=`<div class="score-row"><div class="score-top"><span>Inventory Accuracy</span><b>96.8%</b></div><div class="progress"><span style="width:96.8%"></span></div></div><div class="score-row"><div class="score-top"><span>Supplier Reliability</span><b>${avg}%</b></div><div class="progress"><span style="width:${avg}%"></span></div></div><div class="score-row"><div class="score-top"><span>Low Stock Resolution</span><b>${c.critical+c.reorder?Math.max(20,100-(c.critical+c.reorder)*8):100}%</b></div><div class="progress"><span style="width:${c.critical+c.reorder?Math.max(20,100-(c.critical+c.reorder)*8):100}%"></span></div></div>`;
+}
+function generateReport(){
+  const c=analyzeInventory(),value=state.inventory.reduce((a,i)=>a+i.stock*i.unitCost,0),pending=state.procurement.filter(p=>p.status==="Pending").length;
+  document.getElementById("reportSummary").innerHTML=`<div class="grid3"><div><b>${money(value)}</b><div class="small">Current inventory value</div></div><div><b>${c.critical+c.reorder}</b><div class="small">Low-stock products</div></div><div><b>${pending}</b><div class="small">Pending purchase requests</div></div></div><div class="alert green" style="margin-top:15px"><div>📊</div><div><strong>Executive interpretation</strong><p>OPTIFLOW 360 analyzed ${state.inventory.length} products across ${state.locations.length} locations. The current workflow contains inventory monitoring, supplier evaluation, procurement approval, risk detection and explainable AI recommendations.</p></div></div>`;
+  toast("Executive report generated");
 }
 
-
-/* ---------- INVENTORY ANALYSIS BUTTON ---------- */
-
-function runInventoryAnalysis() {
-
-    const analysis = analyzeInventory();
-
-    showToast(
-        "Analysis complete: " +
-        analysis.critical +
-        " critical, " +
-        analysis.reorder +
-        " reorder, " +
-        analysis.overstock +
-        " overstock"
-    );
-
+/* ---------------- ADMIN ---------------- */
+function openAdminModal(){
+  const a=state.admin;document.getElementById("adminName").value=a.name;document.getElementById("adminShop").value=a.shop;document.getElementById("adminEmail").value=a.email;document.getElementById("adminPhone").value=a.phone;
+  document.getElementById("adminModal").classList.add("show");
+}
+function saveAdmin(){
+  state.admin={name:document.getElementById("adminName").value.trim()||"Administrator",shop:document.getElementById("adminShop").value.trim()||"OPTIFLOW Store",email:document.getElementById("adminEmail").value.trim(),phone:document.getElementById("adminPhone").value.trim()};
+  saveState();document.getElementById("topAvatar").textContent=state.admin.name.split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase();closeModal("adminModal");toast("Admin profile saved");
 }
 
-
-/* ---------- SUPPLIER ANALYSIS ---------- */
-
-function analyzeSuppliers() {
-
-    const suppliers = [
-
-        {
-            name: "TechSource Pvt Ltd",
-            quality: 95,
-            delivery: 91,
-            price: 89
-        },
-
-        {
-            name: "Global Components",
-            quality: 88,
-            delivery: 82,
-            price: 83
-        },
-
-        {
-            name: "Metro Supplies",
-            quality: 72,
-            delivery: 61,
-            price: 74
-        }
-
-    ];
-
-    suppliers.forEach(function(supplier) {
-
-        supplier.score =
-            Math.round(
-                (supplier.quality +
-                supplier.delivery +
-                supplier.price) / 3
-            );
-
-    });
-
-    return suppliers;
+/* ---------------- DEMO / UTILS ---------------- */
+function seedDemo(){
+  state=JSON.parse(JSON.stringify(defaultState));saveState();refreshAll();toast("Demo scenario loaded");
 }
-
-
-/* ---------- SUPPLIER SCORE ---------- */
-
-function recalculateSupplierScores() {
-
-    const suppliers = analyzeSuppliers();
-
-    const bestSupplier =
-        suppliers.reduce(function(best, current) {
-
-            return current.score > best.score
-                ? current
-                : best;
-
-        });
-
-    showToast(
-        "Supplier scores updated. Highest score: " +
-        bestSupplier.name +
-        " (" +
-        bestSupplier.score +
-        "%)"
-    );
-
+function closeModal(id){document.getElementById(id).classList.remove("show")}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function refreshAll(){
+  populateLocationSelects();renderInventory();renderSuppliers();renderProcurement();renderRisks();refreshDashboard();refreshReport();renderLocations();
+  document.getElementById("topAvatar").textContent=state.admin.name.split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase();
 }
-
-
-/* ---------- PROCUREMENT ANALYSIS ---------- */
-
-function runProcurementAnalysis() {
-
-    const recommendations = [];
-
-    inventoryData.forEach(function(item) {
-
-        if (item.stock < item.reorderPoint) {
-
-            const quantity =
-                item.demand * 2 - item.stock;
-
-            recommendations.push({
-
-                product: item.product,
-
-                quantity: Math.max(
-                    10,
-                    Math.round(quantity)
-                ),
-
-                estimatedCost:
-                    Math.max(
-                        10,
-                        Math.round(quantity)
-                    ) * item.unitCost
-
-            });
-
-        }
-
-    });
-
-    if (recommendations.length === 0) {
-
-        showToast(
-            "No immediate procurement action required"
-        );
-
-        return;
-    }
-
-    let message =
-        "PROCUREMENT ANALYSIS\n\n";
-
-    recommendations.forEach(function(item) {
-
-        message +=
-            item.product +
-            "\nRecommended quantity: " +
-            item.quantity +
-            " units\nEstimated cost: ₹" +
-            item.estimatedCost.toLocaleString("en-IN") +
-            "\n\n";
-
-    });
-
-    alert(message);
-
-}
-
-
-/* ---------- RISK SCAN ---------- */
-
-function runRiskScan() {
-
-    const risks = [];
-
-    inventoryData.forEach(function(item) {
-
-        if (item.stock < item.reorderPoint * 0.5) {
-
-            risks.push(
-                item.product +
-                " - HIGH STOCKOUT RISK"
-            );
-
-        } else if (item.stock < item.reorderPoint) {
-
-            risks.push(
-                item.product +
-                " - REORDER REQUIRED"
-            );
-
-        } else if (item.stock > item.demand * 2) {
-
-            risks.push(
-                item.product +
-                " - EXCESS INVENTORY"
-            );
-
-        }
-
-    });
-
-    let message =
-        "OPTIFLOW 360 RISK SCAN\n\n";
-
-    if (risks.length === 0) {
-
-        message +=
-            "No major inventory risks detected.";
-
-    } else {
-
-        risks.forEach(function(risk, index) {
-
-            message +=
-                (index + 1) +
-                ". " +
-                risk +
-                "\n";
-
-        });
-
-    }
-
-    alert(message);
-
-}
-
-
-/* ---------- AI DECISION ENGINE ---------- */
-
-function generateAI() {
-
-    let highestRisk = null;
-
-    inventoryData.forEach(function(item) {
-
-        const riskRatio =
-            item.demand / Math.max(item.stock, 1);
-
-        if (
-            !highestRisk ||
-            riskRatio > highestRisk.riskRatio
-        ) {
-
-            highestRisk = {
-
-                item: item,
-
-                riskRatio: riskRatio
-
-            };
-
-        }
-
-    });
-
-    const item = highestRisk.item;
-
-    const recommendedQuantity =
-        Math.max(
-            10,
-            item.demand * 2 - item.stock
-        );
-
-    const estimatedCost =
-        recommendedQuantity * item.unitCost;
-
-    showToast(
-        "AI decision analysis generated"
-    );
-
-    setTimeout(function() {
-
-        alert(
-
-            "OPTIFLOW AI ANALYSIS\n\n" +
-
-            "Priority: " +
-            item.product +
-            "\n\n" +
-
-            "Current Stock: " +
-            item.stock +
-            " units\n" +
-
-            "Monthly Demand: " +
-            item.demand +
-            " units\n" +
-
-            "Reorder Point: " +
-            item.reorderPoint +
-            " units\n\n" +
-
-            "Recommended Purchase: " +
-            recommendedQuantity +
-            " units\n" +
-
-            "Estimated Cost: ₹" +
-            estimatedCost.toLocaleString("en-IN") +
-            "\n\n" +
-
-            "Risk Level: HIGH\n\n" +
-
-            "Reason: Current inventory is below " +
-            "the required reorder level."
-
-        );
-
-    }, 500);
-
-}
-
-
-/* ---------- TABLE SEARCH ---------- */
-
-function filterTable(input, tableId) {
-
-    const filter =
-        input.value.toLowerCase();
-
-    const table =
-        document.getElementById(tableId);
-
-    if (!table) {
-        return;
-    }
-
-    const rows =
-        table.getElementsByTagName("tr");
-
-    for (
-        let i = 1;
-        i < rows.length;
-        i++
-    ) {
-
-        const text =
-            rows[i].innerText.toLowerCase();
-
-        rows[i].style.display =
-            text.includes(filter)
-                ? ""
-                : "none";
-
-    }
-
-}
-
-
-/* ---------- BUTTON CONNECTIONS ---------- */
-
-/*
-   These listeners connect the existing
-   buttons in the HTML to the functions above.
-*/
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        /* Inventory */
-
-        const inventoryButton =
-            document.querySelector(
-                "#inventory .btn.green"
-            );
-
-        if (inventoryButton) {
-
-            inventoryButton.onclick =
-                runInventoryAnalysis;
-
-        }
-
-
-        /* Supplier */
-
-        const supplierButton =
-            document.querySelector(
-                "#suppliers .btn.green"
-            );
-
-        if (supplierButton) {
-
-            supplierButton.onclick =
-                recalculateSupplierScores;
-
-        }
-
-
-        /* Procurement */
-
-        const procurementButton =
-            document.querySelector(
-                "#procurement .btn.green"
-            );
-
-        if (procurementButton) {
-
-            procurementButton.onclick =
-                runProcurementAnalysis;
-
-        }
-
-
-        /* Risk */
-
-        const riskButton =
-            document.querySelector(
-                "#risks .btn"
-            );
-
-        if (riskButton) {
-
-            riskButton.onclick =
-                runRiskScan;
-
-        }
-
-
-        /* AI */
-
-        const aiButton =
-            document.querySelector(
-                "#ai .btn.green"
-            );
-
-        if (aiButton) {
-
-            aiButton.onclick =
-                generateAI;
-
-        }
-
-    }
-);
-function addNewProduct() {
-
-    const product = document.getElementById("newProductName").value.trim();
-    const category = document.getElementById("newProductCategory").value.trim();
-    const stock = Number(document.getElementById("newProductStock").value);
-    const demand = Number(document.getElementById("newProductDemand").value);
-    const reorderPoint = Number(document.getElementById("newProductReorder").value);
-    const unitCost = Number(document.getElementById("newProductCost").value);
-
-    if (!product || !category || !stock || !demand || !reorderPoint || !unitCost) {
-        alert("Please enter all product details.");
-        return;
-    }
-
-    inventoryData.push({
-        product: product,
-        category: category,
-        stock: stock,
-        demand: demand,
-        reorderPoint: reorderPoint,
-        unitCost: unitCost
-    });
-
-    let status;
-    let badgeClass;
-
-    if (stock < reorderPoint * 0.5) {
-        status = "Critical";
-        badgeClass = "red";
-    } else if (stock < reorderPoint) {
-        status = "Reorder";
-        badgeClass = "orange";
-    } else if (stock > demand * 2) {
-        status = "Overstock";
-        badgeClass = "orange";
-    } else {
-        status = "Healthy";
-        badgeClass = "green";
-    }
-
-    const table = document.getElementById("inventoryTable");
-
-    const row = table.insertRow(-1);
-
-    row.innerHTML = `
-        <td>${product}</td>
-        <td>${category}</td>
-        <td>${stock}</td>
-        <td>${demand}</td>
-        <td>${reorderPoint}</td>
-        <td>₹${unitCost.toLocaleString("en-IN")}</td>
-        <td><span class="badge ${badgeClass}">${status}</span></td>
-    `;
-
-    showToast(product + " added successfully");
-
-    document.getElementById("newProductName").value = "";
-    document.getElementById("newProductCategory").value = "";
-    document.getElementById("newProductStock").value = "";
-    document.getElementById("newProductDemand").value = "";
-    document.getElementById("newProductReorder").value = "";
-    document.getElementById("newProductCost").value = "";
-}
+document.addEventListener("DOMContentLoaded",()=>{
+  refreshAll();
+  document.querySelectorAll(".modal-backdrop").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("show")}));
+});
 </script>
-
 </body>
 </html>
