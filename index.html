@@ -1699,6 +1699,149 @@ Add Location
 <div
 id="toastContainer">
 </div>
+  <!-- FLOATING CHATBOT START -->
+
+<style>
+#floatingChatButton{
+  position:fixed;
+  right:25px;
+  bottom:25px;
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  border:none;
+  background:#2563eb;
+  color:white;
+  font-size:25px;
+  cursor:pointer;
+  box-shadow:0 8px 25px rgba(0,0,0,.22);
+  z-index:9998;
+}
+
+#floatingChatBox{
+  position:fixed;
+  right:25px;
+  bottom:95px;
+  width:340px;
+  height:450px;
+  background:white;
+  border-radius:16px;
+  box-shadow:0 12px 40px rgba(0,0,0,.25);
+  overflow:hidden;
+  display:none;
+  flex-direction:column;
+  z-index:9999;
+}
+
+#floatingChatHeader{
+  background:#0b1220;
+  color:white;
+  padding:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:700;
+}
+
+#floatingChatMessages{
+  flex:1;
+  padding:15px;
+  overflow-y:auto;
+  background:#f5f7fb;
+}
+
+.floating-msg{
+  max-width:80%;
+  padding:10px 12px;
+  border-radius:12px;
+  margin-bottom:10px;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.floating-msg.ai{
+  background:white;
+  color:#172033;
+  border:1px solid #e5eaf1;
+}
+
+.floating-msg.user{
+  background:#2563eb;
+  color:white;
+  margin-left:auto;
+}
+
+#floatingChatInputArea{
+  display:flex;
+  gap:8px;
+  padding:10px;
+  border-top:1px solid #e5eaf1;
+  background:white;
+}
+
+#floatingChatInput{
+  flex:1;
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  padding:10px;
+  outline:none;
+}
+
+#floatingChatSend{
+  border:none;
+  background:#2563eb;
+  color:white;
+  border-radius:8px;
+  padding:0 14px;
+  cursor:pointer;
+}
+
+#floatingChatClose{
+  cursor:pointer;
+  font-size:18px;
+}
+</style>
+
+<button id="floatingChatButton" onclick="toggleFloatingChat()">
+  💬
+</button>
+
+<div id="floatingChatBox">
+
+  <div id="floatingChatHeader">
+    <span>🤖 OPTIFLOW AI</span>
+    <span id="floatingChatClose" onclick="toggleFloatingChat()">×</span>
+  </div>
+
+  <div id="floatingChatMessages">
+
+    <div class="floating-msg ai">
+      Hello! 👋 I'm OPTIFLOW AI.<br><br>
+      I can help you with inventory, procurement, suppliers and stock risks.
+    </div>
+
+  </div>
+
+  <div id="floatingChatInputArea">
+
+    <input
+      id="floatingChatInput"
+      type="text"
+      placeholder="Ask something..."
+      onkeydown="if(event.key==='Enter') sendFloatingChat()"
+    >
+
+    <button
+      id="floatingChatSend"
+      onclick="sendFloatingChat()">
+      ➤
+    </button>
+
+  </div>
+
+</div>
+
+<!-- FLOATING CHATBOT END -->
 
 
 
