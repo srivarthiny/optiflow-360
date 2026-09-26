@@ -2302,7 +2302,69 @@ document.addEventListener(
 
     }
 );
+function addNewProduct() {
 
+    const product = document.getElementById("newProductName").value.trim();
+    const category = document.getElementById("newProductCategory").value.trim();
+    const stock = Number(document.getElementById("newProductStock").value);
+    const demand = Number(document.getElementById("newProductDemand").value);
+    const reorderPoint = Number(document.getElementById("newProductReorder").value);
+    const unitCost = Number(document.getElementById("newProductCost").value);
+
+    if (!product || !category || !stock || !demand || !reorderPoint || !unitCost) {
+        alert("Please enter all product details.");
+        return;
+    }
+
+    inventoryData.push({
+        product: product,
+        category: category,
+        stock: stock,
+        demand: demand,
+        reorderPoint: reorderPoint,
+        unitCost: unitCost
+    });
+
+    let status;
+    let badgeClass;
+
+    if (stock < reorderPoint * 0.5) {
+        status = "Critical";
+        badgeClass = "red";
+    } else if (stock < reorderPoint) {
+        status = "Reorder";
+        badgeClass = "orange";
+    } else if (stock > demand * 2) {
+        status = "Overstock";
+        badgeClass = "orange";
+    } else {
+        status = "Healthy";
+        badgeClass = "green";
+    }
+
+    const table = document.getElementById("inventoryTable");
+
+    const row = table.insertRow(-1);
+
+    row.innerHTML = `
+        <td>${product}</td>
+        <td>${category}</td>
+        <td>${stock}</td>
+        <td>${demand}</td>
+        <td>${reorderPoint}</td>
+        <td>₹${unitCost.toLocaleString("en-IN")}</td>
+        <td><span class="badge ${badgeClass}">${status}</span></td>
+    `;
+
+    showToast(product + " added successfully");
+
+    document.getElementById("newProductName").value = "";
+    document.getElementById("newProductCategory").value = "";
+    document.getElementById("newProductStock").value = "";
+    document.getElementById("newProductDemand").value = "";
+    document.getElementById("newProductReorder").value = "";
+    document.getElementById("newProductCost").value = "";
+}
 </script>
 
 </body>
