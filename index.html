@@ -1657,114 +1657,633 @@ tr:last-child td{
 
 <script>
 
-/* PAGE NAVIGATION */
+/* ===============================
+   OPTIFLOW 360 - APPLICATION LOGIC
+   =============================== */
 
-function showPage(pageId, element){
 
-    document.querySelectorAll(".page").forEach(function(page){
+/* ---------- PAGE NAVIGATION ---------- */
+
+function showPage(pageId, element) {
+
+    document.querySelectorAll(".page").forEach(function(page) {
         page.classList.remove("active");
     });
 
-    document.getElementById(pageId).classList.add("active");
+    const selectedPage = document.getElementById(pageId);
 
-    document.querySelectorAll(".nav").forEach(function(nav){
+    if (selectedPage) {
+        selectedPage.classList.add("active");
+    }
+
+    document.querySelectorAll(".nav").forEach(function(nav) {
         nav.classList.remove("active");
     });
 
-    element.classList.add("active");
+    if (element) {
+        element.classList.add("active");
+    }
 
     window.scrollTo({
-        top:0,
-        behavior:"smooth"
+        top: 0,
+        behavior: "smooth"
     });
 }
 
 
-/* TOAST */
+/* ---------- TOAST MESSAGE ---------- */
 
-function showToast(message){
+function showToast(message) {
 
-    let toast=document.createElement("div");
+    const oldToast = document.querySelector(".optiflow-toast");
 
-    toast.innerText="✓  "+message;
+    if (oldToast) {
+        oldToast.remove();
+    }
 
-    toast.style.position="fixed";
-    toast.style.right="25px";
-    toast.style.bottom="25px";
-    toast.style.background="#0b1220";
-    toast.style.color="white";
-    toast.style.padding="14px 20px";
-    toast.style.borderRadius="9px";
-    toast.style.zIndex="9999";
-    toast.style.boxShadow="0 8px 30px rgba(0,0,0,.25)";
-    toast.style.fontSize="13px";
+    const toast = document.createElement("div");
+
+    toast.className = "optiflow-toast";
+    toast.innerText = "✓  " + message;
+
+    toast.style.position = "fixed";
+    toast.style.right = "25px";
+    toast.style.bottom = "25px";
+    toast.style.background = "#0b1220";
+    toast.style.color = "white";
+    toast.style.padding = "14px 20px";
+    toast.style.borderRadius = "9px";
+    toast.style.zIndex = "9999";
+    toast.style.boxShadow = "0 8px 30px rgba(0,0,0,.25)";
+    toast.style.fontSize = "13px";
 
     document.body.appendChild(toast);
 
-    setTimeout(function(){
-        toast.remove();
-    },2500);
+    setTimeout(function() {
+
+        if (toast) {
+            toast.remove();
+        }
+
+    }, 2500);
 }
 
 
-/* REFRESH */
+/* ---------- INVENTORY DATA ---------- */
 
-function refreshData(){
+const inventoryData = [
+
+    {
+        product: "Laptop Stand",
+        category: "Accessories",
+        stock: 18,
+        demand: 50,
+        reorderPoint: 70,
+        unitCost: 1200
+    },
+
+    {
+        product: "Wireless Mouse",
+        category: "Peripherals",
+        stock: 124,
+        demand: 80,
+        reorderPoint: 60,
+        unitCost: 650
+    },
+
+    {
+        product: "Mechanical Keyboard",
+        category: "Peripherals",
+        stock: 15,
+        demand: 65,
+        reorderPoint: 75,
+        unitCost: 2400
+    },
+
+    {
+        product: "24-inch Monitor",
+        category: "Displays",
+        stock: 90,
+        demand: 40,
+        reorderPoint: 35,
+        unitCost: 11500
+    },
+
+    {
+        product: "USB-C Hub",
+        category: "Accessories",
+        stock: 62,
+        demand: 55,
+        reorderPoint: 50,
+        unitCost: 1800
+    },
+
+    {
+        product: "Webcam",
+        category: "Electronics",
+        stock: 42,
+        demand: 48,
+        reorderPoint: 55,
+        unitCost: 3200
+    }
+
+];
+
+
+/* ---------- INVENTORY ANALYSIS ---------- */
+
+function analyzeInventory() {
+
+    let critical = 0;
+    let reorder = 0;
+    let overstock = 0;
+    let healthy = 0;
+
+    inventoryData.forEach(function(item) {
+
+        if (item.stock < item.reorderPoint * 0.5) {
+
+            critical++;
+
+        } else if (item.stock < item.reorderPoint) {
+
+            reorder++;
+
+        } else if (item.stock > item.demand * 2) {
+
+            overstock++;
+
+        } else {
+
+            healthy++;
+
+        }
+
+    });
+
+    return {
+        critical: critical,
+        reorder: reorder,
+        overstock: overstock,
+        healthy: healthy
+    };
+}
+
+
+/* ---------- REFRESH DATA ---------- */
+
+function refreshData() {
 
     showToast("Supply-chain data refreshed");
 
-    setTimeout(function(){
+    const analysis = analyzeInventory();
 
-        let value=document.querySelector("#dashboard .kpi-value.red");
+    setTimeout(function() {
 
-        if(value){
-            value.innerText="17";
+        const dashboardLowStock =
+            document.querySelector("#dashboard .kpi-value.red");
+
+        if (dashboardLowStock) {
+
+            dashboardLowStock.innerText =
+                analysis.critical + analysis.reorder;
+
         }
 
-    },700);
+        const inventoryLowStock =
+            document.querySelector("#inventory .kpi-value.red");
+
+        if (inventoryLowStock) {
+
+            inventoryLowStock.innerText =
+                analysis.critical + analysis.reorder;
+
+        }
+
+    }, 500);
 }
 
 
-/* AI ANALYSIS */
+/* ---------- INVENTORY ANALYSIS BUTTON ---------- */
 
-function generateAI(){
+function runInventoryAnalysis() {
 
-    showToast("AI decision analysis generated");
+    const analysis = analyzeInventory();
 
-    setTimeout(function(){
+    showToast(
+        "Analysis complete: " +
+        analysis.critical +
+        " critical, " +
+        analysis.reorder +
+        " reorder, " +
+        analysis.overstock +
+        " overstock"
+    );
 
-        alert(
-            "OPTIFLOW AI ANALYSIS\n\n"+
-            "Priority: Mechanical Keyboard\n"+
-            "Recommended Purchase: 120 units\n"+
-            "Suggested Supplier: TechSource Pvt Ltd\n"+
-            "Estimated Cost: ₹48,000\n"+
-            "Risk Level: High\n\n"+
-            "Reason: Current inventory is below the calculated reorder point."
+}
+
+
+/* ---------- SUPPLIER ANALYSIS ---------- */
+
+function analyzeSuppliers() {
+
+    const suppliers = [
+
+        {
+            name: "TechSource Pvt Ltd",
+            quality: 95,
+            delivery: 91,
+            price: 89
+        },
+
+        {
+            name: "Global Components",
+            quality: 88,
+            delivery: 82,
+            price: 83
+        },
+
+        {
+            name: "Metro Supplies",
+            quality: 72,
+            delivery: 61,
+            price: 74
+        }
+
+    ];
+
+    suppliers.forEach(function(supplier) {
+
+        supplier.score =
+            Math.round(
+                (supplier.quality +
+                supplier.delivery +
+                supplier.price) / 3
+            );
+
+    });
+
+    return suppliers;
+}
+
+
+/* ---------- SUPPLIER SCORE ---------- */
+
+function recalculateSupplierScores() {
+
+    const suppliers = analyzeSuppliers();
+
+    const bestSupplier =
+        suppliers.reduce(function(best, current) {
+
+            return current.score > best.score
+                ? current
+                : best;
+
+        });
+
+    showToast(
+        "Supplier scores updated. Highest score: " +
+        bestSupplier.name +
+        " (" +
+        bestSupplier.score +
+        "%)"
+    );
+
+}
+
+
+/* ---------- PROCUREMENT ANALYSIS ---------- */
+
+function runProcurementAnalysis() {
+
+    const recommendations = [];
+
+    inventoryData.forEach(function(item) {
+
+        if (item.stock < item.reorderPoint) {
+
+            const quantity =
+                item.demand * 2 - item.stock;
+
+            recommendations.push({
+
+                product: item.product,
+
+                quantity: Math.max(
+                    10,
+                    Math.round(quantity)
+                ),
+
+                estimatedCost:
+                    Math.max(
+                        10,
+                        Math.round(quantity)
+                    ) * item.unitCost
+
+            });
+
+        }
+
+    });
+
+    if (recommendations.length === 0) {
+
+        showToast(
+            "No immediate procurement action required"
         );
 
-    },500);
-}
-
-
-/* TABLE SEARCH */
-
-function filterTable(input,tableId){
-
-    let filter=input.value.toLowerCase();
-
-    let table=document.getElementById(tableId);
-
-    let rows=table.getElementsByTagName("tr");
-
-    for(let i=1;i<rows.length;i++){
-
-        let text=rows[i].innerText.toLowerCase();
-
-        rows[i].style.display=
-            text.includes(filter) ? "" : "none";
+        return;
     }
+
+    let message =
+        "PROCUREMENT ANALYSIS\n\n";
+
+    recommendations.forEach(function(item) {
+
+        message +=
+            item.product +
+            "\nRecommended quantity: " +
+            item.quantity +
+            " units\nEstimated cost: ₹" +
+            item.estimatedCost.toLocaleString("en-IN") +
+            "\n\n";
+
+    });
+
+    alert(message);
+
 }
+
+
+/* ---------- RISK SCAN ---------- */
+
+function runRiskScan() {
+
+    const risks = [];
+
+    inventoryData.forEach(function(item) {
+
+        if (item.stock < item.reorderPoint * 0.5) {
+
+            risks.push(
+                item.product +
+                " - HIGH STOCKOUT RISK"
+            );
+
+        } else if (item.stock < item.reorderPoint) {
+
+            risks.push(
+                item.product +
+                " - REORDER REQUIRED"
+            );
+
+        } else if (item.stock > item.demand * 2) {
+
+            risks.push(
+                item.product +
+                " - EXCESS INVENTORY"
+            );
+
+        }
+
+    });
+
+    let message =
+        "OPTIFLOW 360 RISK SCAN\n\n";
+
+    if (risks.length === 0) {
+
+        message +=
+            "No major inventory risks detected.";
+
+    } else {
+
+        risks.forEach(function(risk, index) {
+
+            message +=
+                (index + 1) +
+                ". " +
+                risk +
+                "\n";
+
+        });
+
+    }
+
+    alert(message);
+
+}
+
+
+/* ---------- AI DECISION ENGINE ---------- */
+
+function generateAI() {
+
+    let highestRisk = null;
+
+    inventoryData.forEach(function(item) {
+
+        const riskRatio =
+            item.demand / Math.max(item.stock, 1);
+
+        if (
+            !highestRisk ||
+            riskRatio > highestRisk.riskRatio
+        ) {
+
+            highestRisk = {
+
+                item: item,
+
+                riskRatio: riskRatio
+
+            };
+
+        }
+
+    });
+
+    const item = highestRisk.item;
+
+    const recommendedQuantity =
+        Math.max(
+            10,
+            item.demand * 2 - item.stock
+        );
+
+    const estimatedCost =
+        recommendedQuantity * item.unitCost;
+
+    showToast(
+        "AI decision analysis generated"
+    );
+
+    setTimeout(function() {
+
+        alert(
+
+            "OPTIFLOW AI ANALYSIS\n\n" +
+
+            "Priority: " +
+            item.product +
+            "\n\n" +
+
+            "Current Stock: " +
+            item.stock +
+            " units\n" +
+
+            "Monthly Demand: " +
+            item.demand +
+            " units\n" +
+
+            "Reorder Point: " +
+            item.reorderPoint +
+            " units\n\n" +
+
+            "Recommended Purchase: " +
+            recommendedQuantity +
+            " units\n" +
+
+            "Estimated Cost: ₹" +
+            estimatedCost.toLocaleString("en-IN") +
+            "\n\n" +
+
+            "Risk Level: HIGH\n\n" +
+
+            "Reason: Current inventory is below " +
+            "the required reorder level."
+
+        );
+
+    }, 500);
+
+}
+
+
+/* ---------- TABLE SEARCH ---------- */
+
+function filterTable(input, tableId) {
+
+    const filter =
+        input.value.toLowerCase();
+
+    const table =
+        document.getElementById(tableId);
+
+    if (!table) {
+        return;
+    }
+
+    const rows =
+        table.getElementsByTagName("tr");
+
+    for (
+        let i = 1;
+        i < rows.length;
+        i++
+    ) {
+
+        const text =
+            rows[i].innerText.toLowerCase();
+
+        rows[i].style.display =
+            text.includes(filter)
+                ? ""
+                : "none";
+
+    }
+
+}
+
+
+/* ---------- BUTTON CONNECTIONS ---------- */
+
+/*
+   These listeners connect the existing
+   buttons in the HTML to the functions above.
+*/
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        /* Inventory */
+
+        const inventoryButton =
+            document.querySelector(
+                "#inventory .btn.green"
+            );
+
+        if (inventoryButton) {
+
+            inventoryButton.onclick =
+                runInventoryAnalysis;
+
+        }
+
+
+        /* Supplier */
+
+        const supplierButton =
+            document.querySelector(
+                "#suppliers .btn.green"
+            );
+
+        if (supplierButton) {
+
+            supplierButton.onclick =
+                recalculateSupplierScores;
+
+        }
+
+
+        /* Procurement */
+
+        const procurementButton =
+            document.querySelector(
+                "#procurement .btn.green"
+            );
+
+        if (procurementButton) {
+
+            procurementButton.onclick =
+                runProcurementAnalysis;
+
+        }
+
+
+        /* Risk */
+
+        const riskButton =
+            document.querySelector(
+                "#risks .btn"
+            );
+
+        if (riskButton) {
+
+            riskButton.onclick =
+                runRiskScan;
+
+        }
+
+
+        /* AI */
+
+        const aiButton =
+            document.querySelector(
+                "#ai .btn.green"
+            );
+
+        if (aiButton) {
+
+            aiButton.onclick =
+                generateAI;
+
+        }
+
+    }
+);
 
 </script>
 
