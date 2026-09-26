@@ -1,423 +1,1772 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OPTIFLOW 360</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPTIFLOW 360 | Supply Chain Intelligence</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+}
 
-        body {
-            background: #f5f7fb;
-            color: #1f2937;
-        }
+:root{
+    --navy:#0b1220;
+    --navy2:#111b2e;
+    --green:#19c37d;
+    --green2:#0f9f68;
+    --blue:#3b82f6;
+    --orange:#f59e0b;
+    --red:#ef4444;
+    --purple:#8b5cf6;
+    --bg:#f4f7fb;
+    --card:#ffffff;
+    --text:#172033;
+    --muted:#718096;
+    --border:#e7ebf2;
+}
 
-        .header {
-            background: #0f172a;
-            color: white;
-            padding: 22px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+body{
+    background:var(--bg);
+    color:var(--text);
+}
 
-        .logo {
-            font-size: 26px;
-            font-weight: bold;
-        }
+/* TOP BAR */
 
-        .logo span {
-            color: #22c55e;
-        }
+.topbar{
+    height:70px;
+    background:var(--navy);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 28px;
+    position:sticky;
+    top:0;
+    z-index:20;
+}
 
-        .header-right {
-            font-size: 14px;
-            color: #cbd5e1;
-        }
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:.4px;
+}
 
-        .container {
-            display: flex;
-            min-height: calc(100vh - 72px);
-        }
+.brand-mark{
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--green),#38bdf8);
+    display:grid;
+    place-items:center;
+    color:white;
+    font-weight:900;
+}
 
-        .sidebar {
-            width: 240px;
-            background: #111827;
-            color: white;
-            padding: 25px 15px;
-        }
+.brand span{
+    color:var(--green);
+}
 
-        .sidebar h3 {
-            color: #94a3b8;
-            font-size: 12px;
-            text-transform: uppercase;
-            margin: 10px 15px 15px;
-        }
+.top-right{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    color:#cbd5e1;
+    font-size:13px;
+}
 
-        .nav-item {
-            padding: 14px 15px;
-            margin: 5px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            color: #cbd5e1;
-        }
+.live{
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
 
-        .nav-item:hover,
-        .nav-item.active {
-            background: #1e293b;
-            color: #22c55e;
-        }
+.dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 10px var(--green);
+}
 
-        .main {
-            flex: 1;
-            padding: 35px;
-            overflow-y: auto;
-        }
+.avatar{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    background:#26334b;
+    display:grid;
+    place-items:center;
+    color:white;
+    font-weight:bold;
+}
 
-        .welcome {
-            margin-bottom: 30px;
-        }
+/* LAYOUT */
 
-        .welcome h1 {
-            font-size: 30px;
-            margin-bottom: 8px;
-        }
+.layout{
+    display:flex;
+    min-height:calc(100vh - 70px);
+}
 
-        .welcome p {
-            color: #64748b;
-        }
+.sidebar{
+    width:245px;
+    background:var(--navy2);
+    color:white;
+    padding:24px 14px;
+    flex-shrink:0;
+}
 
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
+.side-title{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:#64748b;
+    margin:5px 14px 12px;
+}
 
-        .card {
-            background: white;
-            padding: 22px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+.nav{
+    padding:12px 14px;
+    margin:5px 0;
+    border-radius:9px;
+    color:#b9c4d5;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:14px;
+    transition:.2s;
+}
 
-        .card-title {
-            color: #64748b;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
+.nav:hover{
+    background:#18243a;
+    color:white;
+}
 
-        .card-value {
-            font-size: 28px;
-            font-weight: bold;
-        }
+.nav.active{
+    background:rgba(25,195,125,.13);
+    color:#50e6a5;
+    border-left:3px solid var(--green);
+}
 
-        .green {
-            color: #16a34a;
-        }
+.main{
+    flex:1;
+    padding:30px;
+    min-width:0;
+}
 
-        .red {
-            color: #dc2626;
-        }
+/* PAGES */
 
-        .orange {
-            color: #ea580c;
-        }
+.page{
+    display:none;
+    animation:fade .25s ease;
+}
 
-        .blue {
-            color: #2563eb;
-        }
+.page.active{
+    display:block;
+}
 
-        .section-grid {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 25px;
-        }
+@keyframes fade{
+    from{opacity:0;transform:translateY(5px)}
+    to{opacity:1;transform:translateY(0)}
+}
 
-        .panel {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+.page-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:25px;
+}
 
-        .panel h2 {
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
+.page-head h1{
+    font-size:28px;
+    margin-bottom:6px;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+.page-head p{
+    color:var(--muted);
+    font-size:14px;
+}
 
-        th, td {
-            text-align: left;
-            padding: 13px 8px;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 14px;
-        }
+.btn{
+    border:none;
+    padding:11px 17px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    background:var(--navy);
+    color:white;
+}
 
-        th {
-            color: #64748b;
-            font-size: 12px;
-        }
+.btn.green{
+    background:var(--green2);
+}
 
-        .status {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
+.btn:hover{
+    opacity:.9;
+}
 
-        .status-low {
-            background: #fee2e2;
-            color: #dc2626;
-        }
+/* KPI */
 
-        .status-normal {
-            background: #dcfce7;
-            color: #15803d;
-        }
+.kpis{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:22px;
+}
 
-        .status-over {
-            background: #ffedd5;
-            color: #c2410c;
-        }
+.kpi{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:20px;
+    box-shadow:0 3px 15px rgba(15,23,42,.04);
+}
 
-        .alert {
-            padding: 15px;
-            background: #fff7ed;
-            border-left: 4px solid #f97316;
-            border-radius: 6px;
-            margin-bottom: 12px;
-        }
+.kpi-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:var(--muted);
+    font-size:13px;
+}
 
-        .alert strong {
-            display: block;
-            margin-bottom: 5px;
-        }
+.kpi-icon{
+    width:38px;
+    height:38px;
+    border-radius:9px;
+    display:grid;
+    place-items:center;
+    font-size:18px;
+    background:#eef5ff;
+}
 
-        .ai-box {
-            margin-top: 25px;
-            background: linear-gradient(135deg, #ecfdf5, #eff6ff);
-            border: 1px solid #bbf7d0;
-            border-radius: 12px;
-            padding: 25px;
-        }
+.kpi-value{
+    font-size:27px;
+    font-weight:800;
+    margin:13px 0 5px;
+}
 
-        .ai-box h2 {
-            color: #166534;
-            margin-bottom: 10px;
-        }
+.kpi-change{
+    font-size:12px;
+}
 
-        .recommendation {
-            margin-top: 15px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-        }
+.up{color:#16a34a}
+.down{color:#dc2626}
 
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            color: #94a3b8;
-            font-size: 12px;
-        }
+/* PANELS */
 
-        @media(max-width: 1000px) {
-            .cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
+.grid2{
+    display:grid;
+    grid-template-columns:1.5fr 1fr;
+    gap:20px;
+    margin-bottom:20px;
+}
 
-            .section-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+.grid3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    margin-bottom:20px;
+}
 
-        @media(max-width: 700px) {
-            .sidebar {
-                display: none;
-            }
+.panel{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:21px;
+    box-shadow:0 3px 15px rgba(15,23,42,.04);
+}
 
-            .main {
-                padding: 20px;
-            }
+.panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
 
-            .cards {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+.panel-head h2{
+    font-size:16px;
+}
+
+.small{
+    color:var(--muted);
+    font-size:12px;
+}
+
+/* CHART */
+
+.chart{
+    height:210px;
+    display:flex;
+    align-items:flex-end;
+    gap:14px;
+    padding:20px 8px 5px;
+    border-bottom:1px solid var(--border);
+}
+
+.bar{
+    flex:1;
+    border-radius:6px 6px 0 0;
+    background:linear-gradient(to top,#16a36d,#51dfaa);
+    min-width:20px;
+    position:relative;
+}
+
+.bar span{
+    position:absolute;
+    bottom:-24px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:11px;
+    color:var(--muted);
+}
+
+.bar b{
+    position:absolute;
+    top:-20px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:10px;
+    color:var(--muted);
+}
+
+/* TABLE */
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    color:#7b8798;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    text-align:left;
+    padding:12px 9px;
+    border-bottom:1px solid var(--border);
+}
+
+td{
+    padding:14px 9px;
+    font-size:13px;
+    border-bottom:1px solid #edf0f4;
+}
+
+tr:last-child td{
+    border-bottom:none;
+}
+
+.badge{
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
+    display:inline-block;
+}
+
+.badge.green{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.badge.red{
+    background:#fee2e2;
+    color:#dc2626;
+}
+
+.badge.orange{
+    background:#fef3c7;
+    color:#b45309;
+}
+
+.badge.blue{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.badge.purple{
+    background:#ede9fe;
+    color:#6d28d9;
+}
+
+/* ALERTS */
+
+.alert{
+    display:flex;
+    gap:12px;
+    padding:13px;
+    border-radius:9px;
+    margin-bottom:10px;
+    background:#fff8eb;
+    border-left:4px solid var(--orange);
+}
+
+.alert.red{
+    background:#fff1f2;
+    border-color:var(--red);
+}
+
+.alert.green{
+    background:#ecfdf5;
+    border-color:var(--green);
+}
+
+.alert-icon{
+    font-size:18px;
+}
+
+.alert strong{
+    font-size:13px;
+    display:block;
+    margin-bottom:4px;
+}
+
+.alert p{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.5;
+}
+
+/* AI */
+
+.ai-card{
+    background:linear-gradient(135deg,#0c1829,#12263d);
+    color:white;
+    border-radius:14px;
+    padding:23px;
+    position:relative;
+    overflow:hidden;
+}
+
+.ai-card:after{
+    content:"";
+    position:absolute;
+    width:180px;
+    height:180px;
+    right:-70px;
+    top:-70px;
+    border-radius:50%;
+    background:rgba(25,195,125,.1);
+}
+
+.ai-label{
+    color:#5ee8ae;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-weight:bold;
+}
+
+.ai-card h2{
+    margin:8px 0;
+    font-size:20px;
+}
+
+.ai-card p{
+    color:#aebdce;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.ai-recommend{
+    margin-top:17px;
+    padding:15px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:9px;
+}
+
+.ai-recommend strong{
+    color:#fff;
+}
+
+.ai-recommend span{
+    color:#64e7b0;
+}
+
+/* SUPPLIER SCORE */
+
+.score-row{
+    margin-bottom:16px;
+}
+
+.score-top{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+.progress{
+    height:7px;
+    border-radius:10px;
+    background:#edf1f6;
+    overflow:hidden;
+}
+
+.progress span{
+    height:100%;
+    display:block;
+    border-radius:10px;
+    background:linear-gradient(90deg,#19c37d,#48df9f);
+}
+
+/* SEARCH */
+
+.search{
+    border:1px solid var(--border);
+    padding:10px 13px;
+    border-radius:8px;
+    outline:none;
+    width:230px;
+}
+
+/* RECOMMENDATIONS */
+
+.rec{
+    padding:16px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    margin-bottom:12px;
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.rec h3{
+    font-size:14px;
+    margin-bottom:6px;
+}
+
+.rec p{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.5;
+}
+
+.priority{
+    white-space:nowrap;
+}
+
+/* FOOTER */
+
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:11px;
+    padding:25px 0 5px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1100px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .grid2{grid-template-columns:1fr}
+}
+
+@media(max-width:800px){
+    .sidebar{width:70px}
+    .side-title{display:none}
+    .nav span:last-child{display:none}
+    .nav{justify-content:center}
+    .main{padding:18px}
+    .grid3{grid-template-columns:1fr}
+}
+
+@media(max-width:600px){
+    .top-right .live{display:none}
+    .kpis{grid-template-columns:1fr}
+    .page-head{flex-direction:column;gap:15px}
+    .search{width:100%}
+}
+</style>
 </head>
 
 <body>
 
-<header class="header">
-    <div class="logo">OPTIFLOW <span>360</span></div>
-    <div class="header-right">Supply Chain Intelligence Platform &nbsp; | &nbsp; Admin</div>
+<!-- TOP BAR -->
+<header class="topbar">
+
+    <div class="brand">
+        <div class="brand-mark">O</div>
+        OPTIFLOW <span>360</span>
+    </div>
+
+    <div class="top-right">
+        <div class="live">
+            <div class="dot"></div>
+            System Operational
+        </div>
+        <span>Enterprise Supply Chain Intelligence</span>
+        <div class="avatar">GP</div>
+    </div>
+
 </header>
 
-<div class="container">
 
-    <aside class="sidebar">
+<div class="layout">
 
-        <h3>Navigation</h3>
+<!-- SIDEBAR -->
+<aside class="sidebar">
 
-        <div class="nav-item active">📊 Dashboard</div>
-        <div class="nav-item">📦 Inventory Intelligence</div>
-        <div class="nav-item">🏭 Supplier Management</div>
-        <div class="nav-item">🛒 Procurement</div>
-        <div class="nav-item">⚠️ Risk & Alerts</div>
-        <div class="nav-item">🤖 AI Decision Support</div>
-        <div class="nav-item">📈 Reports & Analytics</div>
+    <div class="side-title">Workspace</div>
 
-    </aside>
+    <div class="nav active" onclick="showPage('dashboard',this)">
+        <span>📊</span><span>Dashboard</span>
+    </div>
 
-    <main class="main">
+    <div class="nav" onclick="showPage('inventory',this)">
+        <span>📦</span><span>Inventory Intelligence</span>
+    </div>
 
-        <div class="welcome">
+    <div class="nav" onclick="showPage('suppliers',this)">
+        <span>🏭</span><span>Supplier Management</span>
+    </div>
+
+    <div class="nav" onclick="showPage('procurement',this)">
+        <span>🛒</span><span>Procurement Automation</span>
+    </div>
+
+    <div class="nav" onclick="showPage('risks',this)">
+        <span>⚠️</span><span>Risk & Alerts</span>
+    </div>
+
+    <div class="nav" onclick="showPage('ai',this)">
+        <span>🤖</span><span>AI Decision Support</span>
+    </div>
+
+    <div class="nav" onclick="showPage('reports',this)">
+        <span>📈</span><span>Reports & Analytics</span>
+    </div>
+
+</aside>
+
+
+<main class="main">
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<section id="dashboard" class="page active">
+
+    <div class="page-head">
+        <div>
             <h1>Supply Chain Overview</h1>
-            <p>Monitor operations, identify risks and make data-driven procurement decisions.</p>
+            <p>Real-time intelligence for inventory, suppliers and procurement decisions.</p>
         </div>
 
-        <div class="cards">
+        <button class="btn green" onclick="refreshData()">↻ Refresh Data</button>
+    </div>
 
-            <div class="card">
-                <div class="card-title">Total Inventory Value</div>
-                <div class="card-value blue">₹12.8L</div>
+
+    <div class="kpis">
+
+        <div class="kpi">
+            <div class="kpi-top">
+                Inventory Value
+                <div class="kpi-icon">💰</div>
+            </div>
+            <div class="kpi-value">₹12.8L</div>
+            <div class="kpi-change up">↑ 8.4% from last month</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-top">
+                Active Products
+                <div class="kpi-icon">📦</div>
+            </div>
+            <div class="kpi-value">248</div>
+            <div class="kpi-change up">↑ 12 new products</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-top">
+                Low Stock Items
+                <div class="kpi-icon">⚠️</div>
+            </div>
+            <div class="kpi-value red">18</div>
+            <div class="kpi-change down">↑ 4 since yesterday</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-top">
+                Supplier Performance
+                <div class="kpi-icon">🏭</div>
+            </div>
+            <div class="kpi-value green">91%</div>
+            <div class="kpi-change up">↑ 3.2% this quarter</div>
+        </div>
+
+    </div>
+
+
+    <div class="grid2">
+
+        <div class="panel">
+
+            <div class="panel-head">
+                <h2>Procurement Spend</h2>
+                <span class="small">Last 6 months</span>
             </div>
 
-            <div class="card">
-                <div class="card-title">Active Products</div>
-                <div class="card-value">248</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">Low Stock Items</div>
-                <div class="card-value red">18</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">Supplier Performance</div>
-                <div class="card-value green">91%</div>
+            <div class="chart">
+                <div class="bar" style="height:45%"><b>4.2L</b><span>Apr</span></div>
+                <div class="bar" style="height:60%"><b>5.5L</b><span>May</span></div>
+                <div class="bar" style="height:52%"><b>4.8L</b><span>Jun</span></div>
+                <div class="bar" style="height:75%"><b>6.9L</b><span>Jul</span></div>
+                <div class="bar" style="height:68%"><b>6.2L</b><span>Aug</span></div>
+                <div class="bar" style="height:88%"><b>8.4L</b><span>Sep</span></div>
             </div>
 
         </div>
 
-        <div class="section-grid">
 
-            <div class="panel">
+        <div class="panel">
 
-                <h2>📦 Inventory Intelligence</h2>
+            <div class="panel-head">
+                <h2>Critical Alerts</h2>
+                <span class="badge red">4 Active</span>
+            </div>
 
+            <div class="alert red">
+                <div class="alert-icon">🔴</div>
+                <div>
+                    <strong>Stockout Risk</strong>
+                    <p>Keyboard inventory may reach zero within 6 days.</p>
+                </div>
+            </div>
+
+            <div class="alert">
+                <div class="alert-icon">🟠</div>
+                <div>
+                    <strong>Supplier Delay</strong>
+                    <p>Supplier B has a delayed shipment.</p>
+                </div>
+            </div>
+
+            <div class="alert green">
+                <div class="alert-icon">🟢</div>
+                <div>
+                    <strong>Optimization Found</strong>
+                    <p>Potential ₹18,400 procurement saving detected.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="grid2">
+
+        <div class="panel">
+
+            <div class="panel-head">
+                <h2>Inventory Intelligence</h2>
+                <span class="small">Current status</span>
+            </div>
+
+            <div class="table-wrap">
                 <table>
-
                     <tr>
-                        <th>PRODUCT</th>
-                        <th>STOCK</th>
-                        <th>DEMAND</th>
-                        <th>STATUS</th>
+                        <th>Product</th>
+                        <th>Stock</th>
+                        <th>Demand</th>
+                        <th>Status</th>
                     </tr>
 
                     <tr>
                         <td>Laptop Stand</td>
                         <td>18</td>
                         <td>50</td>
-                        <td><span class="status status-low">Low Stock</span></td>
+                        <td><span class="badge red">Low Stock</span></td>
                     </tr>
 
                     <tr>
                         <td>Wireless Mouse</td>
                         <td>124</td>
                         <td>80</td>
-                        <td><span class="status status-normal">Normal</span></td>
+                        <td><span class="badge green">Normal</span></td>
                     </tr>
 
                     <tr>
                         <td>Keyboard</td>
                         <td>15</td>
                         <td>65</td>
-                        <td><span class="status status-low">Critical</span></td>
+                        <td><span class="badge red">Critical</span></td>
                     </tr>
 
                     <tr>
                         <td>Monitor</td>
                         <td>90</td>
                         <td>40</td>
-                        <td><span class="status status-over">Overstock</span></td>
+                        <td><span class="badge orange">Overstock</span></td>
                     </tr>
-
                 </table>
-
-            </div>
-
-            <div class="panel">
-
-                <h2>⚠️ Critical Alerts</h2>
-
-                <div class="alert">
-                    <strong>Stockout Risk</strong>
-                    Laptop Stand may reach stockout within 8 days.
-                </div>
-
-                <div class="alert">
-                    <strong>Supplier Delay</strong>
-                    Supplier B has recorded a delivery delay.
-                </div>
-
-                <div class="alert">
-                    <strong>Excess Inventory</strong>
-                    Monitor inventory is above recommended level.
-                </div>
-
             </div>
 
         </div>
 
-        <div class="ai-box">
 
-            <h2>🤖 AI Decision Support</h2>
+        <div class="ai-card">
+
+            <div class="ai-label">AI Decision Engine</div>
+
+            <h2>Recommended Action</h2>
 
             <p>
-                OPTIFLOW 360 analyzes inventory, demand and supplier
-                information to generate procurement recommendations.
+                OPTIFLOW 360 detected a potential stockout based on
+                current inventory, demand velocity and supplier lead time.
             </p>
 
-            <div class="recommendation">
-
-                <strong>Recommended Action</strong>
-
-                <p style="margin-top:8px;">
-                    Keyboard inventory is below the calculated reorder level.
-                    The system recommends purchasing <b>120 units</b>
-                    from <b>TechSource Pvt Ltd</b>.
+            <div class="ai-recommend">
+                <strong>Purchase 120 Keyboard units</strong>
+                <p style="margin-top:7px">
+                    Suggested supplier:
+                    <span>TechSource Pvt Ltd</span>
                 </p>
-
-                <p style="margin-top:10px;">
-                    <b>Priority:</b>
-                    <span class="red">High</span>
-                    &nbsp;&nbsp;
-                    <b>Estimated Cost:</b> ₹48,000
+                <p style="margin-top:5px">
+                    Estimated cost: <span>₹48,000</span>
                 </p>
-
             </div>
 
         </div>
 
-        <div class="footer">
-            OPTIFLOW 360 © 2026 | AI-Powered Supply Chain Intelligence
+    </div>
+
+</section>
+
+
+<!-- ================= INVENTORY ================= -->
+
+<section id="inventory" class="page">
+
+    <div class="page-head">
+        <div>
+            <h1>Inventory Intelligence</h1>
+            <p>Monitor stock levels, demand and reorder requirements.</p>
         </div>
 
-    </main>
+        <button class="btn green" onclick="showToast('Inventory analysis refreshed')">
+            Analyze Inventory
+        </button>
+    </div>
 
+
+    <div class="kpis">
+
+        <div class="kpi">
+            <div class="kpi-top">Total SKUs <div class="kpi-icon">📦</div></div>
+            <div class="kpi-value">248</div>
+            <div class="small">Across 8 categories</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-top">Low Stock <div class="kpi-icon">🔴</div></div>
+            <div class="kpi-value red">18</div>
+            <div class="small">Require attention</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-top">Overstock <div class="kpi-icon">📊</div></div>
+            <div class="kpi-value orange">11</div>
+            <div class="small">Optimization opportunities</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-top">Inventory Accuracy <div class="kpi-icon">✓</div></div>
+            <div class="kpi-value green">96.8%</div>
+            <div class="small">Cycle-count accuracy</div>
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-head">
+            <h2>Inventory Status</h2>
+            <input class="search" placeholder="Search product..." onkeyup="filterTable(this,'inventoryTable')">
+        </div>
+
+        <div class="table-wrap">
+
+            <table id="inventoryTable">
+
+                <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Current Stock</th>
+                    <th>Monthly Demand</th>
+                    <th>Reorder Point</th>
+                    <th>Unit Cost</th>
+                    <th>Status</th>
+                </tr>
+
+                <tr>
+                    <td>Laptop Stand</td>
+                    <td>Accessories</td>
+                    <td>18</td>
+                    <td>50</td>
+                    <td>70</td>
+                    <td>₹1,200</td>
+                    <td><span class="badge red">Critical</span></td>
+                </tr>
+
+                <tr>
+                    <td>Wireless Mouse</td>
+                    <td>Peripherals</td>
+                    <td>124</td>
+                    <td>80</td>
+                    <td>60</td>
+                    <td>₹650</td>
+                    <td><span class="badge green">Healthy</span></td>
+                </tr>
+
+                <tr>
+                    <td>Mechanical Keyboard</td>
+                    <td>Peripherals</td>
+                    <td>15</td>
+                    <td>65</td>
+                    <td>75</td>
+                    <td>₹2,400</td>
+                    <td><span class="badge red">Critical</span></td>
+                </tr>
+
+                <tr>
+                    <td>24-inch Monitor</td>
+                    <td>Displays</td>
+                    <td>90</td>
+                    <td>40</td>
+                    <td>35</td>
+                    <td>₹11,500</td>
+                    <td><span class="badge orange">Overstock</span></td>
+                </tr>
+
+                <tr>
+                    <td>USB-C Hub</td>
+                    <td>Accessories</td>
+                    <td>62</td>
+                    <td>55</td>
+                    <td>50</td>
+                    <td>₹1,800</td>
+                    <td><span class="badge blue">Normal</span></td>
+                </tr>
+
+                <tr>
+                    <td>Webcam</td>
+                    <td>Electronics</td>
+                    <td>42</td>
+                    <td>48</td>
+                    <td>55</td>
+                    <td>₹3,200</td>
+                    <td><span class="badge orange">Reorder</span></td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= SUPPLIERS ================= -->
+
+<section id="suppliers" class="page">
+
+    <div class="page-head">
+        <div>
+            <h1>Supplier Management</h1>
+            <p>Evaluate supplier reliability, quality and delivery performance.</p>
+        </div>
+
+        <button class="btn green" onclick="showToast('Supplier scores recalculated')">
+            Recalculate Scores
+        </button>
+    </div>
+
+
+    <div class="grid3">
+
+        <div class="panel">
+
+            <div class="panel-head">
+                <h2>TechSource Pvt Ltd</h2>
+                <span class="badge green">Preferred</span>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>Overall Score</span><b>92%</b></div>
+                <div class="progress"><span style="width:92%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>Quality</span><b>95%</b></div>
+                <div class="progress"><span style="width:95%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>On-Time Delivery</span><b>91%</b></div>
+                <div class="progress"><span style="width:91%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>Price Competitiveness</span><b>89%</b></div>
+                <div class="progress"><span style="width:89%"></span></div>
+            </div>
+
+        </div>
+
+
+        <div class="panel">
+
+            <div class="panel-head">
+                <h2>Global Components</h2>
+                <span class="badge blue">Active</span>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>Overall Score</span><b>84%</b></div>
+                <div class="progress"><span style="width:84%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>Quality</span><b>88%</b></div>
+                <div class="progress"><span style="width:88%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>On-Time Delivery</span><b>82%</b></div>
+                <div class="progress"><span style="width:82%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>Price Competitiveness</span><b>83%</b></div>
+                <div class="progress"><span style="width:83%"></span></div>
+            </div>
+
+        </div>
+
+
+        <div class="panel">
+
+            <div class="panel-head">
+                <h2>Metro Supplies</h2>
+                <span class="badge orange">Watch</span>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>Overall Score</span><b>68%</b></div>
+                <div class="progress"><span style="width:68%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>Quality</span><b>72%</b></div>
+                <div class="progress"><span style="width:72%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>On-Time Delivery</span><b>61%</b></div>
+                <div class="progress"><span style="width:61%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top"><span>Price Competitiveness</span><b>74%</b></div>
+                <div class="progress"><span style="width:74%"></span></div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-head">
+            <h2>Supplier Performance</h2>
+            <span class="small">Current quarter</span>
+        </div>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <tr>
+                    <th>Supplier</th>
+                    <th>Orders</th>
+                    <th>On-Time Rate</th>
+                    <th>Quality</th>
+                    <th>Lead Time</th>
+                    <th>Score</th>
+                </tr>
+
+                <tr>
+                    <td>TechSource Pvt Ltd</td>
+                    <td>86</td>
+                    <td>91%</td>
+                    <td>95%</td>
+                    <td>5 days</td>
+                    <td><span class="badge green">92</span></td>
+                </tr>
+
+                <tr>
+                    <td>Global Components</td>
+                    <td>64</td>
+                    <td>82%</td>
+                    <td>88%</td>
+                    <td>7 days</td>
+                    <td><span class="badge blue">84</span></td>
+                </tr>
+
+                <tr>
+                    <td>Metro Supplies</td>
+                    <td>42</td>
+                    <td>61%</td>
+                    <td>72%</td>
+                    <td>11 days</td>
+                    <td><span class="badge orange">68</span></td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PROCUREMENT ================= -->
+
+<section id="procurement" class="page">
+
+    <div class="page-head">
+        <div>
+            <h1>Procurement Automation</h1>
+            <p>AI-assisted purchase recommendations based on inventory and demand.</p>
+        </div>
+
+        <button class="btn green" onclick="showToast('Procurement analysis completed')">
+            Run Procurement Analysis
+        </button>
+    </div>
+
+
+    <div class="kpis">
+
+        <div class="kpi">
+            <div class="kpi-top">Pending Recommendations <div class="kpi-icon">🛒</div></div>
+            <div class="kpi-value">12</div>
+            <div class="small">Awaiting review</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-top">Estimated Spend <div class="kpi-icon">💰</div></div>
+            <div class="kpi-value">₹4.82L</div>
+            <div class="small">Next procurement cycle</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-top">Potential Savings <div class="kpi-icon">📉</div></div>
+            <div class="kpi-value green">₹38.4K</div>
+            <div class="small">Optimization opportunity</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-top">Automation Rate <div class="kpi-icon">⚙️</div></div>
+            <div class="kpi-value">76%</div>
+            <div class="small">Process automation</div>
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-head">
+            <h2>AI Procurement Recommendations</h2>
+            <span class="badge purple">AI Generated</span>
+        </div>
+
+
+        <div class="rec">
+
+            <div>
+                <h3>Mechanical Keyboard — Purchase 120 units</h3>
+                <p>
+                    Current stock is 15 units against a reorder point of 75.
+                    Demand velocity indicates a high stockout probability.
+                    TechSource has the best combined price and delivery score.
+                </p>
+            </div>
+
+            <div class="priority">
+                <span class="badge red">HIGH</span>
+            </div>
+
+        </div>
+
+
+        <div class="rec">
+
+            <div>
+                <h3>Webcam — Purchase 60 units</h3>
+                <p>
+                    Current stock is below the calculated reorder level.
+                    Recommended supplier: Global Components.
+                </p>
+            </div>
+
+            <div class="priority">
+                <span class="badge orange">MEDIUM</span>
+            </div>
+
+        </div>
+
+
+        <div class="rec">
+
+            <div>
+                <h3>24-inch Monitor — Hold Purchase</h3>
+                <p>
+                    Inventory exceeds projected demand. Additional procurement
+                    should be delayed to avoid excess holding cost.
+                </p>
+            </div>
+
+            <div class="priority">
+                <span class="badge green">OPTIMIZE</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= RISKS ================= -->
+
+<section id="risks" class="page">
+
+    <div class="page-head">
+        <div>
+            <h1>Risk & Alerts</h1>
+            <p>Identify supply-chain risks before they impact operations.</p>
+        </div>
+
+        <button class="btn" onclick="showToast('Risk scan completed')">
+            Run Risk Scan
+        </button>
+    </div>
+
+
+    <div class="grid3">
+
+        <div class="kpi">
+            <div class="kpi-top">Critical Risks <div class="kpi-icon">🔴</div></div>
+            <div class="kpi-value red">4</div>
+            <div class="small">Immediate attention</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-top">Medium Risks <div class="kpi-icon">🟠</div></div>
+            <div class="kpi-value orange">9</div>
+            <div class="small">Monitor closely</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-top">Resolved Risks <div class="kpi-icon">🟢</div></div>
+            <div class="kpi-value green">37</div>
+            <div class="small">This quarter</div>
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-head">
+            <h2>Detected Supply Chain Risks</h2>
+            <span class="small">AI risk engine</span>
+        </div>
+
+
+        <div class="alert red">
+
+            <div class="alert-icon">🔴</div>
+
+            <div>
+                <strong>High Stockout Probability — Mechanical Keyboard</strong>
+                <p>
+                    Current stock: 15 units. Forecast demand: 65 units/month.
+                    Expected stockout window: 6–8 days.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="alert red">
+
+            <div class="alert-icon">🚚</div>
+
+            <div>
+                <strong>Supplier Delivery Delay — Metro Supplies</strong>
+                <p>
+                    Average lead time has increased from 8 to 11 days.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="alert">
+
+            <div class="alert-icon">📦</div>
+
+            <div>
+                <strong>Excess Inventory — 24-inch Monitor</strong>
+                <p>
+                    Inventory is approximately 2.2× projected monthly demand.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="alert green">
+
+            <div class="alert-icon">✓</div>
+
+            <div>
+                <strong>Risk Mitigated — USB-C Hub</strong>
+                <p>
+                    Reorder completed successfully. Risk status changed to normal.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= AI ================= -->
+
+<section id="ai" class="page">
+
+    <div class="page-head">
+        <div>
+            <h1>AI Decision Support</h1>
+            <p>Intelligent recommendations for supply-chain decision makers.</p>
+        </div>
+
+        <button class="btn green" onclick="generateAI()">
+            ✨ Generate Analysis
+        </button>
+    </div>
+
+
+    <div class="ai-card" style="margin-bottom:20px">
+
+        <div class="ai-label">OPTIFLOW AI ENGINE</div>
+
+        <h2>Supply Chain Decision Assistant</h2>
+
+        <p>
+            The decision engine evaluates inventory levels, demand patterns,
+            supplier performance, lead times and procurement costs to identify
+            actionable business opportunities.
+        </p>
+
+        <div class="ai-recommend">
+
+            <strong>Current Recommendation</strong>
+
+            <p style="margin-top:8px">
+                Prioritize procurement of <span>Mechanical Keyboards</span>
+                from <span>TechSource Pvt Ltd</span>.
+            </p>
+
+            <p style="margin-top:8px">
+                Expected stockout risk can be reduced by approximately
+                <span>74%</span> after replenishment.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="grid3">
+
+        <div class="panel">
+
+            <div class="panel-head">
+                <h2>📦 Inventory Decision</h2>
+            </div>
+
+            <p class="small">
+                Reduce keyboard stockout risk by replenishing 120 units.
+            </p>
+
+            <br>
+
+            <span class="badge red">HIGH PRIORITY</span>
+
+        </div>
+
+
+        <div class="panel">
+
+            <div class="panel-head">
+                <h2>🏭 Supplier Decision</h2>
+            </div>
+
+            <p class="small">
+                TechSource currently provides the strongest combined
+                delivery, quality and price score.
+            </p>
+
+            <br>
+
+            <span class="badge green">RECOMMENDED</span>
+
+        </div>
+
+
+        <div class="panel">
+
+            <div class="panel-head">
+                <h2>💰 Cost Decision</h2>
+            </div>
+
+            <p class="small">
+                Delaying monitor procurement could reduce unnecessary
+                holding costs.
+            </p>
+
+            <br>
+
+            <span class="badge blue">OPTIMIZE</span>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-head">
+            <h2>Decision Logic</h2>
+        </div>
+
+        <table>
+
+            <tr>
+                <th>Input</th>
+                <th>Analysis</th>
+                <th>Output</th>
+            </tr>
+
+            <tr>
+                <td>Current Inventory</td>
+                <td>Compared with reorder point</td>
+                <td>Stock Risk</td>
+            </tr>
+
+            <tr>
+                <td>Demand Velocity</td>
+                <td>Projected consumption</td>
+                <td>Demand Risk</td>
+            </tr>
+
+            <tr>
+                <td>Supplier Performance</td>
+                <td>Quality + delivery + price</td>
+                <td>Supplier Score</td>
+            </tr>
+
+            <tr>
+                <td>Procurement Cost</td>
+                <td>Cost optimization</td>
+                <td>Purchase Recommendation</td>
+            </tr>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<!-- ================= REPORTS ================= -->
+
+<section id="reports" class="page">
+
+    <div class="page-head">
+
+        <div>
+            <h1>Reports & Analytics</h1>
+            <p>Business intelligence for strategic supply-chain decisions.</p>
+        </div>
+
+        <button class="btn green" onclick="showToast('Report generated successfully')">
+            ⬇ Generate Report
+        </button>
+
+    </div>
+
+
+    <div class="grid2">
+
+        <div class="panel">
+
+            <div class="panel-head">
+                <h2>Monthly Procurement Trend</h2>
+                <span class="small">₹ Lakhs</span>
+            </div>
+
+            <div class="chart">
+                <div class="bar" style="height:42%"><b>4.2</b><span>Apr</span></div>
+                <div class="bar" style="height:55%"><b>5.5</b><span>May</span></div>
+                <div class="bar" style="height:48%"><b>4.8</b><span>Jun</span></div>
+                <div class="bar" style="height:69%"><b>6.9</b><span>Jul</span></div>
+                <div class="bar" style="height:62%"><b>6.2</b><span>Aug</span></div>
+                <div class="bar" style="height:84%"><b>8.4</b><span>Sep</span></div>
+            </div>
+
+        </div>
+
+
+        <div class="panel">
+
+            <div class="panel-head">
+                <h2>Operational KPIs</h2>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top">
+                    <span>Inventory Accuracy</span>
+                    <b>96.8%</b>
+                </div>
+                <div class="progress"><span style="width:96.8%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top">
+                    <span>Supplier Reliability</span>
+                    <b>91%</b>
+                </div>
+                <div class="progress"><span style="width:91%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top">
+                    <span>Procurement Automation</span>
+                    <b>76%</b>
+                </div>
+                <div class="progress"><span style="width:76%"></span></div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-top">
+                    <span>Risk Resolution</span>
+                    <b>89%</b>
+                </div>
+                <div class="progress"><span style="width:89%"></span></div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-head">
+            <h2>Executive Summary</h2>
+            <span class="badge purple">AI Assisted</span>
+        </div>
+
+        <table>
+
+            <tr>
+                <th>Metric</th>
+                <th>Current</th>
+                <th>Previous</th>
+                <th>Trend</th>
+            </tr>
+
+            <tr>
+                <td>Inventory Value</td>
+                <td>₹12.8L</td>
+                <td>₹11.8L</td>
+                <td><span class="badge blue">+8.4%</span></td>
+            </tr>
+
+            <tr>
+                <td>Supplier Performance</td>
+                <td>91%</td>
+                <td>87.8%</td>
+                <td><span class="badge green">+3.2%</span></td>
+            </tr>
+
+            <tr>
+                <td>Low Stock Items</td>
+                <td>18</td>
+                <td>14</td>
+                <td><span class="badge red">+4</span></td>
+            </tr>
+
+            <tr>
+                <td>Potential Savings</td>
+                <td>₹38.4K</td>
+                <td>₹27.2K</td>
+                <td><span class="badge green">+41%</span></td>
+            </tr>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<div class="footer">
+    OPTIFLOW 360 © 2026 · AI-Powered Enterprise Supply Chain Intelligence · Procurement Automation & Business Decision Support
 </div>
+
+</main>
+</div>
+
+
+<script>
+
+/* PAGE NAVIGATION */
+
+function showPage(pageId, element){
+
+    document.querySelectorAll(".page").forEach(function(page){
+        page.classList.remove("active");
+    });
+
+    document.getElementById(pageId).classList.add("active");
+
+    document.querySelectorAll(".nav").forEach(function(nav){
+        nav.classList.remove("active");
+    });
+
+    element.classList.add("active");
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+/* TOAST */
+
+function showToast(message){
+
+    let toast=document.createElement("div");
+
+    toast.innerText="✓  "+message;
+
+    toast.style.position="fixed";
+    toast.style.right="25px";
+    toast.style.bottom="25px";
+    toast.style.background="#0b1220";
+    toast.style.color="white";
+    toast.style.padding="14px 20px";
+    toast.style.borderRadius="9px";
+    toast.style.zIndex="9999";
+    toast.style.boxShadow="0 8px 30px rgba(0,0,0,.25)";
+    toast.style.fontSize="13px";
+
+    document.body.appendChild(toast);
+
+    setTimeout(function(){
+        toast.remove();
+    },2500);
+}
+
+
+/* REFRESH */
+
+function refreshData(){
+
+    showToast("Supply-chain data refreshed");
+
+    setTimeout(function(){
+
+        let value=document.querySelector("#dashboard .kpi-value.red");
+
+        if(value){
+            value.innerText="17";
+        }
+
+    },700);
+}
+
+
+/* AI ANALYSIS */
+
+function generateAI(){
+
+    showToast("AI decision analysis generated");
+
+    setTimeout(function(){
+
+        alert(
+            "OPTIFLOW AI ANALYSIS\n\n"+
+            "Priority: Mechanical Keyboard\n"+
+            "Recommended Purchase: 120 units\n"+
+            "Suggested Supplier: TechSource Pvt Ltd\n"+
+            "Estimated Cost: ₹48,000\n"+
+            "Risk Level: High\n\n"+
+            "Reason: Current inventory is below the calculated reorder point."
+        );
+
+    },500);
+}
+
+
+/* TABLE SEARCH */
+
+function filterTable(input,tableId){
+
+    let filter=input.value.toLowerCase();
+
+    let table=document.getElementById(tableId);
+
+    let rows=table.getElementsByTagName("tr");
+
+    for(let i=1;i<rows.length;i++){
+
+        let text=rows[i].innerText.toLowerCase();
+
+        rows[i].style.display=
+            text.includes(filter) ? "" : "none";
+    }
+}
+
+</script>
 
 </body>
 </html>
