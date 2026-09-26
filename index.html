@@ -892,7 +892,25 @@ tr:last-child td{
     </div>
 
 
-    <div class="panel">
+    <div class="panel" style="margin-bottom:20px;">
+    <div class="panel-head">
+        <h2>➕ Add New Product</h2>
+        <span class="small">Manual inventory entry</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;padding:5px 0 15px;">
+        <input id="newProductName" class="search" placeholder="Product Name">
+        <input id="newProductCategory" class="search" placeholder="Category">
+        <input id="newProductStock" class="search" type="number" placeholder="Current Stock">
+        <input id="newProductDemand" class="search" type="number" placeholder="Monthly Demand">
+        <input id="newProductReorder" class="search" type="number" placeholder="Reorder Point">
+        <input id="newProductCost" class="search" type="number" placeholder="Unit Cost ₹">
+    </div>
+
+    <button class="btn green" onclick="addNewProduct()">
+        Add Product
+    </button>
+</div>
 
         <div class="panel-head">
             <h2>Inventory Status</h2>
