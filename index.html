@@ -5,658 +5,3291 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OPTIFLOW 360 | Enterprise Supply Chain Intelligence</title>
 
-<!-- Leaflet map library -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
- integrity="sha256-p4NxAoJBhIINfQ3F9S0JvYV5rQ9Y2qF2x6f5fQf0Jw="
- crossorigin=""/>
-
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Arial,sans-serif}
-:root{
- --navy:#08111f;--navy2:#101b2d;--green:#18c47d;--green2:#0f9f68;
- --blue:#3b82f6;--purple:#8b5cf6;--orange:#f59e0b;--red:#ef4444;
- --cyan:#06b6d4;--bg:#f3f6fa;--card:#fff;--text:#162033;--muted:#6b7a90;
- --border:#e4e9f1;--shadow:0 8px 28px rgba(15,23,42,.06)
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
 }
-body{background:var(--bg);color:var(--text)}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.topbar{height:70px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:1000}
-.brand{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:800}.brand span{color:var(--green)}
-.brand-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--green),#38bdf8);display:grid;place-items:center;font-weight:900}
-.top-right{display:flex;align-items:center;gap:18px;color:#cbd5e1;font-size:13px}.live{display:flex;align-items:center;gap:7px}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
-.avatar{width:35px;height:35px;border-radius:50%;background:#26334b;display:grid;place-items:center;font-weight:800}
-.layout{display:flex;min-height:calc(100vh - 70px)}.sidebar{width:245px;background:var(--navy2);color:#fff;padding:24px 14px;flex-shrink:0}
-.side-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin:5px 14px 12px}
-.nav{padding:12px 14px;margin:5px 0;border-radius:9px;color:#b9c4d5;cursor:pointer;display:flex;align-items:center;gap:12px;font-size:14px;transition:.2s}
-.nav:hover{background:#18243a;color:#fff}.nav.active{background:rgba(25,195,125,.13);color:#50e6a5;border-left:3px solid var(--green)}
-.main{flex:1;padding:28px;min-width:0}.page{display:none;animation:fade .2s}.page.active{display:block}
-@keyframes fade{from{opacity:.2;transform:translateY(5px)}to{opacity:1;transform:none}}
-.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:22px}.page-head h1{font-size:28px;margin-bottom:6px}.page-head p{color:var(--muted);font-size:14px}
-.btn{border:0;padding:10px 15px;border-radius:8px;background:var(--navy);color:#fff;font-weight:700}.btn.green{background:var(--green2)}.btn.blue{background:var(--blue)}.btn.purple{background:var(--purple)}.btn.orange{background:var(--orange)}.btn.red{background:var(--red)}.btn.light{background:#eef3f8;color:var(--text)}.btn.small{padding:7px 10px;font-size:12px}.btn:hover{filter:brightness(.96);transform:translateY(-1px)}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}.kpi,.panel{background:#fff;border:1px solid var(--border);border-radius:13px;padding:19px;box-shadow:var(--shadow)}
-.kpi-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}.kpi-icon{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;background:#eef5ff;font-size:18px}.kpi-value{font-size:27px;font-weight:800;margin:12px 0 4px}.kpi-change{font-size:12px}.up{color:#16a34a}.down{color:#dc2626}
-.grid2{display:grid;grid-template-columns:1.45fr 1fr;gap:18px;margin-bottom:18px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px}
-.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel-head h2{font-size:16px}.small{color:var(--muted);font-size:12px}
-.chart{height:210px;display:flex;align-items:flex-end;gap:14px;padding:20px 8px 6px;border-bottom:1px solid var(--border)}.bar{flex:1;border-radius:6px 6px 0 0;background:linear-gradient(to top,#16a36d,#51dfaa);min-width:20px;position:relative}.bar span{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted)}.bar b{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted)}
-.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th{color:#718096;font-size:11px;text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:11px 8px;border-bottom:1px solid var(--border)}td{padding:12px 8px;font-size:13px;border-bottom:1px solid #edf0f4}tr:last-child td{border-bottom:0}
-.badge{padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;display:inline-block}.badge.green{background:#dcfce7;color:#15803d}.badge.red{background:#fee2e2;color:#dc2626}.badge.orange{background:#fef3c7;color:#b45309}.badge.blue{background:#dbeafe;color:#1d4ed8}.badge.purple{background:#ede9fe;color:#6d28d9}.badge.gray{background:#eef2f7;color:#526174}
-.alert{display:flex;gap:11px;padding:13px;border-radius:9px;margin-bottom:10px;background:#fff8eb;border-left:4px solid var(--orange)}.alert.red{background:#fff1f2;border-color:var(--red)}.alert.green{background:#ecfdf5;border-color:var(--green)}.alert strong{font-size:13px;display:block;margin-bottom:4px}.alert p{color:var(--muted);font-size:12px;line-height:1.45}
-.ai-card{background:linear-gradient(135deg,#0c1829,#12263d);color:#fff;border-radius:14px;padding:22px;position:relative;overflow:hidden}.ai-label{color:#5ee8ae;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:800}.ai-card h2{margin:8px 0;font-size:20px}.ai-card p{color:#aebdce;font-size:13px;line-height:1.6}.ai-recommend{margin-top:15px;padding:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);border-radius:9px}.ai-recommend span{color:#64e7b0}
-.score-row{margin-bottom:15px}.score-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}.progress{height:7px;border-radius:10px;background:#edf1f6;overflow:hidden}.progress span{height:100%;display:block;border-radius:10px;background:linear-gradient(90deg,#19c37d,#48df9f)}
-.search,.field{border:1px solid var(--border);padding:10px 12px;border-radius:8px;outline:none;background:#fff;width:100%}.field:focus,.search:focus{border-color:#9acdb9;box-shadow:0 0 0 3px rgba(24,196,125,.1)}
-.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.form-grid.four{grid-template-columns:repeat(4,1fr)}.form-group label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:5px}
-.action-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.rec{padding:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:11px;display:flex;justify-content:space-between;gap:15px}.rec h3{font-size:14px;margin-bottom:6px}.rec p{color:var(--muted);font-size:12px;line-height:1.5}
-#map{height:430px;border-radius:12px;overflow:hidden;border:1px solid var(--border)}.location-card{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid var(--border);border-radius:9px;margin-bottom:9px}.location-card strong{font-size:13px}.location-card p{font-size:11px;color:var(--muted);margin-top:3px}
-.timeline{border-left:2px solid #dbe4ee;margin-left:8px;padding-left:18px}.timeline-item{position:relative;margin-bottom:17px}.timeline-item:before{content:"";position:absolute;left:-25px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #e4f8ef}.timeline-item strong{font-size:13px}.timeline-item p{font-size:12px;color:var(--muted);margin-top:3px}
-.modal-backdrop{position:fixed;inset:0;background:rgba(4,10,20,.55);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px}.modal-backdrop.show{display:flex}.modal{background:#fff;width:min(720px,100%);max-height:90vh;overflow:auto;border-radius:16px;padding:22px;box-shadow:0 25px 80px rgba(0,0,0,.25)}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.close{border:0;background:#eef2f7;border-radius:8px;width:34px;height:34px;font-size:18px}
-.toast{position:fixed;right:24px;bottom:24px;background:#08111f;color:#fff;padding:13px 17px;border-radius:9px;z-index:3000;box-shadow:0 10px 35px rgba(0,0,0,.25);font-size:13px}
-.footer{text-align:center;color:#94a3b8;font-size:11px;padding:24px 0 5px}
-.empty{padding:25px;text-align:center;color:var(--muted);font-size:13px}
-@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.form-grid,.form-grid.four{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:800px){.sidebar{width:70px}.side-title,.nav span:last-child{display:none}.nav{justify-content:center}.main{padding:17px}}
-@media(max-width:600px){.top-right span,.top-right .live{display:none}.kpis{grid-template-columns:1fr}.form-grid,.form-grid.four{grid-template-columns:1fr}.page-head{flex-direction:column}}
+
+:root{
+    --primary:#2563eb;
+    --secondary:#7c3aed;
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#dc2626;
+    --bg:#f4f7fb;
+    --card:#ffffff;
+    --text:#172033;
+    --muted:#64748b;
+    --border:#e2e8f0;
+    --sidebar:#111827;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+}
+
+body.dark{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --border:#334155;
+}
+
+button{
+    cursor:pointer;
+    border:none;
+}
+
+.app{
+    display:flex;
+    min-height:100vh;
+}
+
+.sidebar{
+    width:250px;
+    background:var(--sidebar);
+    color:white;
+    padding:22px 15px;
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    overflow-y:auto;
+}
+
+.logo{
+    font-size:23px;
+    font-weight:800;
+    padding:10px;
+    margin-bottom:25px;
+}
+
+.logo span{
+    color:#60a5fa;
+}
+
+.nav-item{
+    padding:13px 14px;
+    margin:5px 0;
+    border-radius:9px;
+    cursor:pointer;
+    color:#cbd5e1;
+    transition:.2s;
+}
+
+.nav-item:hover,
+.nav-item.active{
+    background:#1e40af;
+    color:white;
+}
+
+.main{
+    margin-left:250px;
+    width:calc(100% - 250px);
+}
+
+.topbar{
+    height:70px;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 28px;
+    position:sticky;
+    top:0;
+    z-index:20;
+}
+
+.topbar h2{
+    font-size:20px;
+}
+
+.profile{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.avatar{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.content{
+    padding:28px;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.hero{
+    background:linear-gradient(135deg,#1d4ed8,#7c3aed);
+    color:white;
+    padding:28px;
+    border-radius:18px;
+    margin-bottom:25px;
+}
+
+.hero h1{
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+.hero p{
+    opacity:.9;
+}
+
+.kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:25px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 4px 15px rgba(15,23,42,.04);
+}
+
+.kpi{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.kpi h3{
+    font-size:28px;
+    margin:8px 0;
+}
+
+.kpi p{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.icon{
+    width:48px;
+    height:48px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#dbeafe;
+    color:#1d4ed8;
+    font-size:22px;
+}
+
+.grid-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.grid-3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.section-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+}
+
+.section-title h2{
+    font-size:20px;
+}
+
+.btn{
+    padding:10px 16px;
+    border-radius:8px;
+    font-weight:600;
+    font-size:13px;
+}
+
+.btn-primary{
+    background:var(--primary);
+    color:white;
+}
+
+.btn-success{
+    background:var(--success);
+    color:white;
+}
+
+.btn-danger{
+    background:var(--danger);
+    color:white;
+}
+
+.btn-warning{
+    background:var(--warning);
+    color:white;
+}
+
+.btn-secondary{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:11px 13px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    border-radius:8px;
+    outline:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:var(--primary);
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.form-group{
+    margin-bottom:14px;
+}
+
+.form-group label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:6px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:13px 10px;
+    text-align:left;
+    border-bottom:1px solid var(--border);
+    font-size:13px;
+}
+
+th{
+    color:var(--muted);
+    font-size:12px;
+    text-transform:uppercase;
+}
+
+.badge{
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.badge-danger{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.badge-warning{
+    background:#fef3c7;
+    color:#b45309;
+}
+
+.badge-success{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.badge-info{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.search{
+    margin-bottom:15px;
+}
+
+.alert{
+    display:flex;
+    gap:12px;
+    padding:13px;
+    border-radius:10px;
+    margin-bottom:10px;
+    background:var(--bg);
+}
+
+.alert strong{
+    display:block;
+    margin-bottom:3px;
+}
+
+.ai-box{
+    background:linear-gradient(135deg,#eef2ff,#f5f3ff);
+    border:1px solid #c7d2fe;
+    padding:20px;
+    border-radius:14px;
+}
+
+body.dark .ai-box{
+    background:#172554;
+    border-color:#3730a3;
+}
+
+.ai-answer{
+    margin-top:15px;
+    line-height:1.6;
+    white-space:pre-line;
+}
+
+.location-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.map{
+    min-height:350px;
+    border-radius:14px;
+    background:
+      linear-gradient(135deg,#dbeafe,#dcfce7);
+    position:relative;
+    overflow:hidden;
+}
+
+.map::before{
+    content:"";
+    position:absolute;
+    width:130%;
+    height:2px;
+    background:#94a3b8;
+    top:45%;
+    left:-10%;
+    transform:rotate(-15deg);
+}
+
+.map::after{
+    content:"";
+    position:absolute;
+    width:2px;
+    height:130%;
+    background:#94a3b8;
+    left:55%;
+    top:-10%;
+    transform:rotate(20deg);
+}
+
+.map-marker{
+    position:absolute;
+    width:20px;
+    height:20px;
+    background:#dc2626;
+    border:3px solid white;
+    border-radius:50%;
+    box-shadow:0 2px 8px rgba(0,0,0,.3);
+    z-index:2;
+}
+
+.marker-1{
+    top:35%;
+    left:25%;
+}
+
+.marker-2{
+    top:60%;
+    left:55%;
+}
+
+.marker-3{
+    top:25%;
+    left:75%;
+}
+
+.location-card{
+    margin-bottom:10px;
+}
+
+.po-card{
+    border-left:5px solid var(--primary);
+    margin-bottom:12px;
+}
+
+.po-actions{
+    display:flex;
+    gap:7px;
+    margin-top:12px;
+    flex-wrap:wrap;
+}
+
+.chart{
+    height:240px;
+    display:flex;
+    align-items:flex-end;
+    gap:15px;
+    padding:20px;
+    border-bottom:1px solid var(--border);
+}
+
+.bar{
+    flex:1;
+    background:linear-gradient(to top,#2563eb,#60a5fa);
+    border-radius:6px 6px 0 0;
+    position:relative;
+    min-height:10px;
+}
+
+.bar span{
+    position:absolute;
+    bottom:-22px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:11px;
+    color:var(--muted);
+}
+
+.progress{
+    height:8px;
+    background:#e2e8f0;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.progress div{
+    height:100%;
+    background:var(--primary);
+}
+
+.empty{
+    padding:30px;
+    text-align:center;
+    color:var(--muted);
+}
+
+.footer-note{
+    text-align:center;
+    color:var(--muted);
+    padding:25px;
+    font-size:12px;
+}
+
+@media(max-width:1000px){
+    .kpi-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .grid-2,
+    .grid-3,
+    .location-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:700px){
+    .sidebar{
+        width:70px;
+    }
+
+    .logo{
+        font-size:0;
+        text-align:center;
+    }
+
+    .logo span{
+        font-size:20px;
+    }
+
+    .nav-item{
+        text-align:center;
+        font-size:0;
+    }
+
+    .nav-item:first-letter{
+        font-size:18px;
+    }
+
+    .main{
+        margin-left:70px;
+        width:calc(100% - 70px);
+    }
+
+    .content{
+        padding:15px;
+    }
+
+    .kpi-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .topbar{
+        padding:0 15px;
+    }
+}
 </style>
 </head>
 
 <body>
-<header class="topbar">
-  <div class="brand"><div class="brand-mark">O</div>OPTIFLOW <span>360</span></div>
-  <div class="top-right">
-    <div class="live"><div class="dot"></div>System Operational</div>
-    <span>Enterprise Supply Chain Intelligence</span>
-    <div class="avatar" id="topAvatar">GP</div>
-  </div>
-</header>
 
-<div class="layout">
+<div class="app">
+
 <aside class="sidebar">
-  <div class="side-title">Workspace</div>
-  <div class="nav active" onclick="showPage('dashboard',this)"><span>📊</span><span>Dashboard</span></div>
-  <div class="nav" onclick="showPage('inventory',this)"><span>📦</span><span>Inventory Intelligence</span></div>
-  <div class="nav" onclick="showPage('suppliers',this)"><span>🏭</span><span>Supplier Management</span></div>
-  <div class="nav" onclick="showPage('procurement',this)"><span>🛒</span><span>Procurement Automation</span></div>
-  <div class="nav" onclick="showPage('risks',this)"><span>⚠️</span><span>Risk & Alerts</span></div>
-  <div class="nav" onclick="showPage('ai',this)"><span>🤖</span><span>AI Decision Support</span></div>
-  <div class="nav" onclick="showPage('locations',this)"><span>🗺️</span><span>Stock Locations</span></div>
-  <div class="nav" onclick="showPage('reports',this)"><span>📈</span><span>Reports & Analytics</span></div>
-  <div class="nav" onclick="openAdminModal()"><span>⚙️</span><span>Admin Profile</span></div>
+
+    <div class="logo">
+        OPTIFLOW <span>360</span>
+    </div>
+
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+        🏠 Dashboard
+    </div>
+
+    <div class="nav-item" onclick="showPage('inventory',this)">
+        📦 Inventory Intelligence
+    </div>
+
+    <div class="nav-item" onclick="showPage('suppliers',this)">
+        🏭 Suppliers
+    </div>
+
+    <div class="nav-item" onclick="showPage('procurement',this)">
+        🛒 Procurement
+    </div>
+
+    <div class="nav-item" onclick="showPage('risks',this)">
+        ⚠️ Risk & Alerts
+    </div>
+
+    <div class="nav-item" onclick="showPage('ai',this)">
+        🤖 AI Decision Support
+    </div>
+
+    <div class="nav-item" onclick="showPage('locations',this)">
+        📍 Stock Locations
+    </div>
+
+    <div class="nav-item" onclick="showPage('reports',this)">
+        📊 Reports
+    </div>
+
+    <div class="nav-item" onclick="showPage('profile',this)">
+        👤 Admin Profile
+    </div>
+
 </aside>
+
 
 <main class="main">
 
+<header class="topbar">
+
+    <h2 id="pageTitle">Executive Command Center</h2>
+
+    <div class="profile">
+
+        <button class="btn btn-secondary" onclick="toggleDarkMode()">
+            🌙
+        </button>
+
+        <div>
+            <strong>Admin</strong>
+            <small style="display:block;color:var(--muted)">
+                Supply Chain Manager
+            </small>
+        </div>
+
+        <div class="avatar">
+            GP
+        </div>
+
+    </div>
+
+</header>
+
+
+<div class="content">
+
+
+<!-- DASHBOARD -->
+
 <section id="dashboard" class="page active">
-  <div class="page-head">
-    <div><h1>Supply Chain Overview</h1><p>Live operational intelligence for inventory, suppliers and procurement decisions.</p></div>
-    <div class="action-row"><button class="btn light" onclick="seedDemo()">Load Demo Scenario</button><button class="btn green" onclick="refreshDashboard()">↻ Refresh Data</button></div>
-  </div>
-  <div class="kpis">
-    <div class="kpi"><div class="kpi-top">Inventory Value <div class="kpi-icon">💰</div></div><div class="kpi-value" id="kInventoryValue">₹0</div><div class="kpi-change up">Calculated from live inventory</div></div>
-    <div class="kpi"><div class="kpi-top">Active Products <div class="kpi-icon">📦</div></div><div class="kpi-value" id="kProducts">0</div><div class="kpi-change up">Including manual entries</div></div>
-    <div class="kpi"><div class="kpi-top">Low Stock Items <div class="kpi-icon">⚠️</div></div><div class="kpi-value down" id="kLow">0</div><div class="kpi-change down">Requires attention</div></div>
-    <div class="kpi"><div class="kpi-top">Supplier Performance <div class="kpi-icon">🏭</div></div><div class="kpi-value up" id="kSupplier">0%</div><div class="kpi-change up">Weighted supplier score</div></div>
-  </div>
 
-  <div class="grid2">
-    <div class="panel">
-      <div class="panel-head"><h2>Procurement Spend</h2><span class="small">Demo monthly trend</span></div>
-      <div class="chart" id="spendChart"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><h2>Critical Alerts</h2><span class="badge red" id="alertCount">0 Active</span></div>
-      <div id="dashboardAlerts"></div>
-    </div>
-  </div>
+    <div class="hero">
 
-  <div class="grid2">
-    <div class="panel">
-      <div class="panel-head"><h2>Inventory Intelligence</h2><span class="small">Live calculation</span></div>
-      <div class="table-wrap"><table><thead><tr><th>Product</th><th>Stock</th><th>Demand</th><th>Status</th></tr></thead><tbody id="dashboardInventory"></tbody></table></div>
+        <h1>OPTIFLOW 360</h1>
+
+        <p>
+            AI-Powered Enterprise Supply Chain Intelligence,
+            Procurement Automation & Business Decision Support Platform
+        </p>
+
     </div>
-    <div class="ai-card">
-      <div class="ai-label">AI Decision Engine</div>
-      <h2>Recommended Action</h2>
-      <p id="dashboardAIText">Run AI analysis to generate a decision from current inventory, demand and supplier performance.</p>
-      <div class="ai-recommend" id="dashboardAIBox"><strong>No recommendation yet</strong></div>
-      <div class="action-row"><button class="btn green" onclick="showPage('ai',document.querySelectorAll('.nav')[5]);generateAI()">Generate AI Decision</button></div>
+
+
+    <div class="kpi-grid">
+
+        <div class="card kpi">
+
+            <div>
+                <p>Total SKUs</p>
+                <h3 id="kpiSKUs">0</h3>
+                <p>Products monitored</p>
+            </div>
+
+            <div class="icon">📦</div>
+
+        </div>
+
+
+        <div class="card kpi">
+
+            <div>
+                <p>Critical Stock</p>
+                <h3 id="kpiCritical">0</h3>
+                <p>Immediate attention</p>
+            </div>
+
+            <div class="icon">🚨</div>
+
+        </div>
+
+
+        <div class="card kpi">
+
+            <div>
+                <p>Inventory Value</p>
+                <h3 id="kpiValue">₹0</h3>
+                <p>Current stock value</p>
+            </div>
+
+            <div class="icon">💰</div>
+
+        </div>
+
+
+        <div class="card kpi">
+
+            <div>
+                <p>Purchase Orders</p>
+                <h3 id="kpiPO">0</h3>
+                <p>Procurement workflow</p>
+            </div>
+
+            <div class="icon">🛒</div>
+
+        </div>
+
     </div>
-  </div>
+
+
+    <div class="grid-2">
+
+        <div class="card">
+
+            <div class="section-title">
+
+                <h2>Ask OPTIFLOW AI</h2>
+
+                <span class="badge badge-info">
+                    Local AI
+                </span>
+
+            </div>
+
+            <div class="ai-box">
+
+                <p>
+                    Ask questions about your inventory,
+                    procurement or supply chain risks.
+                </p>
+
+                <br>
+
+                <input
+                    id="aiQuestion"
+                    placeholder="Example: Which products need urgent reorder?"
+                >
+
+                <br><br>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="askAI()"
+                >
+                    🤖 Ask OPTIFLOW
+                </button>
+
+                <div
+                    id="aiAnswer"
+                    class="ai-answer"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="section-title">
+
+                <h2>Smart Alerts</h2>
+
+                <button
+                    class="btn btn-secondary"
+                    onclick="showPage('risks')"
+                >
+                    View All
+                </button>
+
+            </div>
+
+            <div id="dashboardAlerts"></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="section-title">
+
+            <h2>Inventory Health</h2>
+
+            <button
+                class="btn btn-primary"
+                onclick="showPage('inventory')"
+            >
+                Manage Inventory
+            </button>
+
+        </div>
+
+        <div id="healthBars"></div>
+
+    </div>
+
 </section>
+
+
+
+<!-- INVENTORY -->
 
 <section id="inventory" class="page">
-  <div class="page-head">
-    <div><h1>Inventory Intelligence</h1><p>Manually enter products, calculate stock status and generate replenishment recommendations.</p></div>
-    <button class="btn green" onclick="runInventoryAnalysis()">🔎 Analyze Inventory</button>
-  </div>
 
-  <div class="kpis">
-    <div class="kpi"><div class="kpi-top">Total SKUs <div class="kpi-icon">📦</div></div><div class="kpi-value" id="iTotal">0</div><div class="small">Live product count</div></div>
-    <div class="kpi"><div class="kpi-top">Low Stock <div class="kpi-icon">🔴</div></div><div class="kpi-value down" id="iLow">0</div><div class="small">Critical + reorder</div></div>
-    <div class="kpi"><div class="kpi-top">Overstock <div class="kpi-icon">📊</div></div><div class="kpi-value" id="iOver">0</div><div class="small">Optimization opportunities</div></div>
-    <div class="kpi"><div class="kpi-top">Inventory Accuracy <div class="kpi-icon">✓</div></div><div class="kpi-value up">96.8%</div><div class="small">Demo cycle-count metric</div></div>
-  </div>
+    <div class="section-title">
 
-  <div class="panel" style="margin-bottom:18px">
-    <div class="panel-head"><h2>➕ Add New Product</h2><span class="small">Manual inventory entry</span></div>
-    <div class="form-grid">
-      <div class="form-group"><label>Product Name</label><input id="newProductName" class="field" placeholder="e.g. Printer Cartridge"></div>
-      <div class="form-group"><label>Category</label><input id="newProductCategory" class="field" placeholder="e.g. Office Supplies"></div>
-      <div class="form-group"><label>Current Stock</label><input id="newProductStock" class="field" type="number" min="0" placeholder="10"></div>
-      <div class="form-group"><label>Monthly Demand</label><input id="newProductDemand" class="field" type="number" min="1" placeholder="40"></div>
-      <div class="form-group"><label>Reorder Point</label><input id="newProductReorder" class="field" type="number" min="1" placeholder="30"></div>
-      <div class="form-group"><label>Unit Cost (₹)</label><input id="newProductCost" class="field" type="number" min="1" placeholder="2000"></div>
-      <div class="form-group"><label>Stock Location</label><select id="newProductLocation" class="field"></select></div>
-      <div class="form-group"><label>Supplier</label><select id="newProductSupplier" class="field"></select></div>
+        <h2>Inventory Intelligence</h2>
+
+        <button
+            class="btn btn-primary"
+            onclick="analyzeInventory()"
+        >
+            🧠 Analyze Inventory
+        </button>
+
     </div>
-    <div class="action-row"><button class="btn green" onclick="addNewProduct()">➕ Add Product</button><button class="btn light" onclick="clearProductForm()">Clear</button></div>
-  </div>
 
-  <div class="panel">
-    <div class="panel-head"><h2>Inventory Status</h2><input id="inventorySearch" class="search" placeholder="Search product..." onkeyup="filterInventory()"></div>
-    <div class="table-wrap"><table id="inventoryTable"><thead><tr><th>Product</th><th>Category</th><th>Stock</th><th>Demand</th><th>Reorder</th><th>Cost</th><th>Location</th><th>Status</th><th>Action</th></tr></thead><tbody id="inventoryBody"></tbody></table></div>
-  </div>
 
-  <div class="panel" style="margin-top:18px">
-    <div class="panel-head"><h2>Latest Inventory Analysis</h2><span class="badge purple">Calculated</span></div>
-    <div id="inventoryAnalysisResult" class="empty">Click Analyze Inventory to calculate risks and recommended purchase quantities.</div>
-  </div>
+    <div class="card">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label>Product Name</label>
+
+                <input
+                    id="productName"
+                    placeholder="Example: Laptop Stand"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Current Stock</label>
+
+                <input
+                    id="productStock"
+                    type="number"
+                    placeholder="100"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Expected Demand</label>
+
+                <input
+                    id="productDemand"
+                    type="number"
+                    placeholder="150"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Reorder Point</label>
+
+                <input
+                    id="productROP"
+                    type="number"
+                    placeholder="80"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Unit Cost ₹</label>
+
+                <input
+                    id="productCost"
+                    type="number"
+                    placeholder="1000"
+                >
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="btn btn-success"
+            onclick="addProduct()"
+        >
+            + Add Product
+        </button>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="card">
+
+        <input
+            class="search"
+            id="inventorySearch"
+            onkeyup="filterInventory()"
+            placeholder="🔎 Search inventory..."
+        >
+
+
+        <div style="overflow-x:auto">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Product</th>
+                        <th>Stock</th>
+                        <th>Demand</th>
+                        <th>Reorder Point</th>
+                        <th>Unit Cost</th>
+                        <th>Status</th>
+                        <th>Recommended Qty</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="inventoryTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
 </section>
+
+
+
+<!-- SUPPLIERS -->
 
 <section id="suppliers" class="page">
-  <div class="page-head"><div><h1>Supplier Management</h1><p>Evaluate suppliers using quality, delivery and price performance.</p></div><button class="btn green" onclick="recalculateSupplierScores()">⚙ Recalculate Scores</button></div>
-  <div class="grid3" id="supplierCards"></div>
-  <div class="panel">
-    <div class="panel-head"><h2>Supplier Performance</h2><button class="btn small light" onclick="openSupplierModal()">+ Add Supplier</button></div>
-    <div class="table-wrap"><table><thead><tr><th>Supplier</th><th>Orders</th><th>On-Time</th><th>Quality</th><th>Price</th><th>Lead Time</th><th>Score</th><th>Action</th></tr></thead><tbody id="supplierBody"></tbody></table></div>
-  </div>
-  <div class="panel" style="margin-top:18px"><div class="panel-head"><h2>Supplier Recommendation Engine</h2><span class="small">Weighted score = quality 40% + delivery 35% + price 25%</span></div><div id="supplierRecommendation" class="empty">Recalculate scores to generate a recommendation.</div></div>
+
+    <div class="section-title">
+
+        <h2>Supplier Management</h2>
+
+        <button
+            class="btn btn-primary"
+            onclick="calculateSupplierScores()"
+        >
+            Recalculate Scores
+        </button>
+
+    </div>
+
+
+    <div class="grid-3" id="supplierCards"></div>
+
+
+    <div class="card">
+
+        <h3 style="margin-bottom:15px">
+            Add Supplier
+        </h3>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label>Supplier Name</label>
+
+                <input id="supplierName">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Quality Score</label>
+
+                <input id="supplierQuality" type="number" min="0" max="100">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Delivery Score</label>
+
+                <input id="supplierDelivery" type="number" min="0" max="100">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Price Score</label>
+
+                <input id="supplierPrice" type="number" min="0" max="100">
+
+            </div>
+
+        </div>
+
+        <button
+            class="btn btn-success"
+            onclick="addSupplier()"
+        >
+            + Add Supplier
+        </button>
+
+    </div>
+
 </section>
+
+
+
+<!-- PROCUREMENT -->
 
 <section id="procurement" class="page">
-  <div class="page-head"><div><h1>Procurement Automation</h1><p>Generate purchase requests from inventory intelligence and move them through approval.</p></div><button class="btn green" onclick="runProcurementAnalysis()">🛒 Run Procurement Analysis</button></div>
-  <div class="kpis">
-    <div class="kpi"><div class="kpi-top">Pending Requests <div class="kpi-icon">🛒</div></div><div class="kpi-value" id="pPending">0</div><div class="small">Awaiting approval</div></div>
-    <div class="kpi"><div class="kpi-top">Estimated Spend <div class="kpi-icon">💰</div></div><div class="kpi-value" id="pSpend">₹0</div><div class="small">Open procurement</div></div>
-    <div class="kpi"><div class="kpi-top">Approved Orders <div class="kpi-icon">✅</div></div><div class="kpi-value" id="pApproved">0</div><div class="small">Completed workflow</div></div>
-    <div class="kpi"><div class="kpi-top">Potential Savings <div class="kpi-icon">📉</div></div><div class="kpi-value up" id="pSavings">₹0</div><div class="small">Supplier optimization</div></div>
-  </div>
-  <div class="panel">
-    <div class="panel-head"><h2>Purchase Requests</h2><span class="badge purple">Workflow Enabled</span></div>
-    <div id="procurementList"></div>
-  </div>
-  <div class="panel" style="margin-top:18px">
-    <div class="panel-head"><h2>Approval Activity</h2></div>
-    <div id="procurementTimeline" class="timeline"></div>
-  </div>
+
+    <div class="section-title">
+
+        <h2>Procurement Automation</h2>
+
+        <button
+            class="btn btn-primary"
+            onclick="generatePOs()"
+        >
+            ⚡ Generate Purchase Requests
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <p style="color:var(--muted);margin-bottom:15px">
+
+            OPTIFLOW automatically identifies products
+            below their reorder point and creates purchase
+            requests.
+
+        </p>
+
+        <div id="poList"></div>
+
+    </div>
+
 </section>
+
+
+
+<!-- RISKS -->
 
 <section id="risks" class="page">
-  <div class="page-head"><div><h1>Risk & Alerts</h1><p>Detect stockout, overstock and supplier risks before they impact operations.</p></div><button class="btn orange" onclick="runRiskScan()">⚠ Run Risk Scan</button></div>
-  <div class="grid3">
-    <div class="kpi"><div class="kpi-top">Critical Risks <div class="kpi-icon">🔴</div></div><div class="kpi-value down" id="rCritical">0</div><div class="small">Immediate attention</div></div>
-    <div class="kpi"><div class="kpi-top">Medium Risks <div class="kpi-icon">🟠</div></div><div class="kpi-value" id="rMedium">0</div><div class="small">Monitor closely</div></div>
-    <div class="kpi"><div class="kpi-top">Resolved Risks <div class="kpi-icon">🟢</div></div><div class="kpi-value up" id="rResolved">0</div><div class="small">Demo workflow events</div></div>
-  </div>
-  <div class="panel"><div class="panel-head"><h2>Detected Supply Chain Risks</h2><span class="small">Rule-based risk engine</span></div><div id="riskList"></div></div>
+
+    <div class="section-title">
+
+        <h2>Risk & Alert Center</h2>
+
+        <button
+            class="btn btn-warning"
+            onclick="scanRisks()"
+        >
+            🔍 Scan Risks
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <div id="riskList"></div>
+
+    </div>
+
 </section>
+
+
+
+<!-- AI -->
 
 <section id="ai" class="page">
-  <div class="page-head"><div><h1>AI Decision Support</h1><p>Explainable decision engine combining inventory, demand and supplier performance.</p></div><button class="btn green" onclick="generateAI()">✨ Generate Analysis</button></div>
-  <div class="ai-card" style="margin-bottom:18px">
-    <div class="ai-label">OPTIFLOW AI ENGINE</div><h2>Supply Chain Decision Assistant</h2>
-    <p>The local decision engine ranks the highest-risk item, calculates replenishment quantity and selects the strongest supplier using measurable business inputs.</p>
-    <div class="ai-recommend" id="aiMainResult"><strong>Run Generate Analysis</strong></div>
-  </div>
-  <div class="grid3">
-    <div class="panel"><div class="panel-head"><h2>📦 Inventory Decision</h2></div><div id="aiInventory" class="small">Waiting for analysis.</div></div>
-    <div class="panel"><div class="panel-head"><h2>🏭 Supplier Decision</h2></div><div id="aiSupplier" class="small">Waiting for analysis.</div></div>
-    <div class="panel"><div class="panel-head"><h2>💰 Cost Decision</h2></div><div id="aiCost" class="small">Waiting for analysis.</div></div>
-  </div>
-  <div class="panel" style="margin-top:18px"><div class="panel-head"><h2>Decision Logic</h2></div><table><thead><tr><th>Input</th><th>Processing</th><th>Output</th></tr></thead><tbody>
-    <tr><td>Current Inventory</td><td>Compare stock with reorder point</td><td>Stock Risk</td></tr>
-    <tr><td>Demand Velocity</td><td>Estimate two-month replenishment need</td><td>Purchase Quantity</td></tr>
-    <tr><td>Supplier Performance</td><td>40% quality + 35% delivery + 25% price</td><td>Supplier Score</td></tr>
-    <tr><td>Unit Cost</td><td>Quantity × unit cost</td><td>Estimated Spend</td></tr>
-  </tbody></table></div>
+
+    <div class="hero">
+
+        <h1>AI Decision Support</h1>
+
+        <p>
+            Explainable rule-based intelligence for
+            inventory and procurement decisions.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="form-group">
+
+            <label>Ask a business question</label>
+
+            <textarea
+                id="aiFullQuestion"
+                rows="4"
+                placeholder="Example: What should I purchase first?"
+            ></textarea>
+
+        </div>
+
+        <button
+            class="btn btn-primary"
+            onclick="fullAIAnalysis()"
+        >
+            🤖 Generate Decision
+        </button>
+
+        <div
+            id="fullAIResult"
+            class="ai-answer"
+        ></div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="grid-3">
+
+        <div class="card">
+
+            <h3>Demand Risk</h3>
+
+            <p id="demandRiskText">
+                Analyzing...
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Stock Risk</h3>
+
+            <p id="stockRiskText">
+                Analyzing...
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Procurement Opportunity</h3>
+
+            <p id="procurementOpportunity">
+                Analyzing...
+            </p>
+
+        </div>
+
+    </div>
+
 </section>
+
+
+
+<!-- LOCATIONS -->
 
 <section id="locations" class="page">
-  <div class="page-head"><div><h1>Stock Locations & Map</h1><p>Visualize where inventory is stored and view shop/warehouse administrators.</p></div><button class="btn green" onclick="fitAllLocations()">🗺 Fit All Locations</button></div>
-  <div class="grid2">
-    <div class="panel"><div class="panel-head"><h2>Inventory Network</h2><span class="small">OpenStreetMap</span></div><div id="map"></div></div>
-    <div class="panel"><div class="panel-head"><h2>Locations</h2><button class="btn small light" onclick="openLocationModal()">+ Add Location</button></div><div id="locationList"></div></div>
-  </div>
-  <div class="panel"><div class="panel-head"><h2>Location Inventory Summary</h2></div><div class="table-wrap"><table><thead><tr><th>Location</th><th>Admin</th><th>City</th><th>SKUs</th><th>Units</th><th>Inventory Value</th></tr></thead><tbody id="locationSummary"></tbody></table></div></div>
+
+    <div class="section-title">
+
+        <h2>Stock Locations</h2>
+
+    </div>
+
+
+    <div class="location-grid">
+
+        <div class="card">
+
+            <h3 style="margin-bottom:15px">
+                Add Warehouse / Store
+            </h3>
+
+            <div class="form-group">
+
+                <label>Location Name</label>
+
+                <input
+                    id="locationName"
+                    placeholder="Chennai Warehouse"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>City</label>
+
+                <input
+                    id="locationCity"
+                    placeholder="Chennai"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Administrator</label>
+
+                <input
+                    id="locationAdmin"
+                    placeholder="Warehouse Manager"
+                >
+
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Latitude</label>
+
+                    <input
+                        id="locationLat"
+                        type="number"
+                        step="any"
+                        placeholder="13.0827"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Longitude</label>
+
+                    <input
+                        id="locationLng"
+                        type="number"
+                        step="any"
+                        placeholder="80.2707"
+                    >
+
+                </div>
+
+            </div>
+
+            <button
+                class="btn btn-success"
+                onclick="addLocation()"
+            >
+                + Add Location
+            </button>
+
+        </div>
+
+
+        <div class="map">
+
+            <div class="map-marker marker-1"></div>
+            <div class="map-marker marker-2"></div>
+            <div class="map-marker marker-3"></div>
+
+        </div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="card">
+
+        <h3 style="margin-bottom:15px">
+            Active Locations
+        </h3>
+
+        <div id="locationList"></div>
+
+    </div>
+
 </section>
+
+
+
+<!-- REPORTS -->
 
 <section id="reports" class="page">
-  <div class="page-head"><div><h1>Reports & Analytics</h1><p>Generate an executive summary from the current working dataset.</p></div><button class="btn green" onclick="generateReport()">⬇ Generate Report</button></div>
-  <div class="grid2"><div class="panel"><div class="panel-head"><h2>Monthly Procurement Trend</h2><span class="small">Demo trend</span></div><div class="chart" id="reportChart"></div></div>
-  <div class="panel"><div class="panel-head"><h2>Operational KPIs</h2></div><div id="reportKPIs"></div></div></div>
-  <div class="panel"><div class="panel-head"><h2>Executive Summary</h2><span class="badge purple">Live</span></div><div id="reportSummary" class="empty">Click Generate Report.</div></div>
+
+    <div class="section-title">
+
+        <h2>Reports & Analytics</h2>
+
+        <button
+            class="btn btn-primary"
+            onclick="refreshReports()"
+        >
+            🔄 Refresh Analytics
+        </button>
+
+    </div>
+
+
+    <div class="grid-2">
+
+        <div class="card">
+
+            <h3>Inventory by Product</h3>
+
+            <div
+                id="inventoryChart"
+                class="chart"
+            ></div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Stock Distribution</h3>
+
+            <br>
+
+            <div id="stockDistribution"></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="grid-3">
+
+        <div class="card">
+
+            <p>Total Inventory Value</p>
+
+            <h2 id="reportValue">
+                ₹0
+            </h2>
+
+        </div>
+
+        <div class="card">
+
+            <p>Average Stock</p>
+
+            <h2 id="reportAverage">
+                0
+            </h2>
+
+        </div>
+
+        <div class="card">
+
+            <p>Critical Items</p>
+
+            <h2 id="reportCritical">
+                0
+            </h2>
+
+        </div>
+
+    </div>
+
 </section>
 
-<div class="footer">OPTIFLOW 360 © 2026 · AI-Powered Enterprise Supply Chain Intelligence · Procurement Automation & Business Decision Support</div>
-</main></div>
 
-<!-- Admin modal -->
-<div class="modal-backdrop" id="adminModal"><div class="modal">
-  <div class="modal-head"><h2>⚙️ Admin / Shop Profile</h2><button class="close" onclick="closeModal('adminModal')">×</button></div>
-  <div class="form-grid">
-    <div class="form-group"><label>Admin Name</label><input id="adminName" class="field"></div>
-    <div class="form-group"><label>Shop / Company</label><input id="adminShop" class="field"></div>
-    <div class="form-group"><label>Email</label><input id="adminEmail" class="field"></div>
-    <div class="form-group"><label>Phone</label><input id="adminPhone" class="field"></div>
-  </div>
-  <div class="action-row"><button class="btn green" onclick="saveAdmin()">Save Profile</button></div>
-</div></div>
 
-<!-- Supplier modal -->
-<div class="modal-backdrop" id="supplierModal"><div class="modal">
-  <div class="modal-head"><h2>🏭 Add Supplier</h2><button class="close" onclick="closeModal('supplierModal')">×</button></div>
-  <div class="form-grid">
-    <div class="form-group"><label>Supplier Name</label><input id="sName" class="field"></div>
-    <div class="form-group"><label>Quality %</label><input id="sQuality" class="field" type="number" min="0" max="100"></div>
-    <div class="form-group"><label>On-Time Delivery %</label><input id="sDelivery" class="field" type="number" min="0" max="100"></div>
-    <div class="form-group"><label>Price Competitiveness %</label><input id="sPrice" class="field" type="number" min="0" max="100"></div>
-    <div class="form-group"><label>Lead Time (days)</label><input id="sLead" class="field" type="number" min="1"></div>
-    <div class="form-group"><label>Orders</label><input id="sOrders" class="field" type="number" min="0"></div>
-  </div>
-  <div class="action-row"><button class="btn green" onclick="saveSupplier()">Add Supplier</button></div>
-</div></div>
+<!-- PROFILE -->
 
-<!-- Location modal -->
-<div class="modal-backdrop" id="locationModal"><div class="modal">
-  <div class="modal-head"><h2>📍 Add Stock Location</h2><button class="close" onclick="closeModal('locationModal')">×</button></div>
-  <div class="form-grid">
-    <div class="form-group"><label>Location Name</label><input id="lName" class="field" placeholder="Main Warehouse"></div>
-    <div class="form-group"><label>Admin Name</label><input id="lAdmin" class="field" placeholder="Manager Name"></div>
-    <div class="form-group"><label>City</label><input id="lCity" class="field" placeholder="Chennai"></div>
-    <div class="form-group"><label>Latitude</label><input id="lLat" class="field" type="number" step="any" placeholder="13.0827"></div>
-    <div class="form-group"><label>Longitude</label><input id="lLng" class="field" type="number" step="any" placeholder="80.2707"></div>
-  </div>
-  <p class="small" style="margin-top:10px">Use public/business location coordinates. The map uses OpenStreetMap tiles through Leaflet.</p>
-  <div class="action-row"><button class="btn green" onclick="saveLocation()">Add Location</button></div>
-</div></div>
+<section id="profile" class="page">
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
- integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
- crossorigin=""></script>
+    <div class="hero">
+
+        <h1>Administrator Profile</h1>
+
+        <p>
+            Manage your OPTIFLOW 360 enterprise workspace.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label>Full Name</label>
+
+                <input
+                    id="profileName"
+                    value="Guru Priya"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Role</label>
+
+                <input
+                    value="Supply Chain Administrator"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Email</label>
+
+                <input
+                    value="admin@optiflow360.com"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Organization</label>
+
+                <input
+                    value="OPTIFLOW Enterprise"
+                >
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="btn btn-primary"
+            onclick="saveProfile()"
+        >
+            Save Profile
+        </button>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="card">
+
+        <h3>System Information</h3>
+
+        <br>
+
+        <p>
+            <strong>Platform:</strong>
+            OPTIFLOW 360
+        </p>
+
+        <p>
+            <strong>Version:</strong>
+            1.0 Enterprise Prototype
+        </p>
+
+        <p>
+            <strong>AI Engine:</strong>
+            Explainable Local Decision Engine
+        </p>
+
+        <p>
+            <strong>Storage:</strong>
+            Browser LocalStorage
+        </p>
+
+    </div>
+
+</section>
+
+
+<div class="footer-note">
+    OPTIFLOW 360 • Enterprise Supply Chain Intelligence Platform
+</div>
+
+</div>
+</main>
+
+</div>
+
 
 <script>
-/* =========================================================
-   OPTIFLOW 360 - COMPLETE WORKING FRONTEND MODEL
-   Data is stored in browser localStorage.
-   ========================================================= */
 
-const STORAGE_KEY = "optiflow360_state_v3";
+let inventory = JSON.parse(
+    localStorage.getItem("optiflow_inventory")
+) || [
 
-const defaultState = {
-  admin:{name:"Guru Priya",shop:"OPTIFLOW Demo Store",email:"admin@optiflow360.local",phone:"+91 90000 00000"},
-  inventory:[
-    {id:1,product:"Laptop Stand",category:"Accessories",stock:18,demand:50,reorderPoint:70,unitCost:1200,locationId:1,supplierId:1},
-    {id:2,product:"Wireless Mouse",category:"Peripherals",stock:124,demand:80,reorderPoint:60,unitCost:650,locationId:1,supplierId:2},
-    {id:3,product:"Mechanical Keyboard",category:"Peripherals",stock:15,demand:65,reorderPoint:75,unitCost:2400,locationId:2,supplierId:1},
-    {id:4,product:"24-inch Monitor",category:"Displays",stock:90,demand:40,reorderPoint:35,unitCost:11500,locationId:2,supplierId:3},
-    {id:5,product:"USB-C Hub",category:"Accessories",stock:62,demand:55,reorderPoint:50,unitCost:1800,locationId:3,supplierId:2},
-    {id:6,product:"Webcam",category:"Electronics",stock:42,demand:48,reorderPoint:55,unitCost:3200,locationId:3,supplierId:2}
-  ],
-  suppliers:[
-    {id:1,name:"TechSource Pvt Ltd",quality:95,delivery:91,price:89,lead:5,orders:86},
-    {id:2,name:"Global Components",quality:88,delivery:82,price:83,lead:7,orders:64},
-    {id:3,name:"Metro Supplies",quality:72,delivery:61,price:74,lead:11,orders:42}
-  ],
-  locations:[
-    {id:1,name:"Central Warehouse",admin:"Arun Kumar",city:"Chennai",lat:13.0827,lng:80.2707},
-    {id:2,name:"Puducherry Distribution Hub",admin:"Priya Menon",city:"Puducherry",lat:11.9416,lng:79.8083},
-    {id:3,name:"Bengaluru Retail Store",admin:"Rahul Sharma",city:"Bengaluru",lat:12.9716,lng:77.5946}
-  ],
-  procurement:[],
-  activity:[],
-  resolvedRisks:0
-};
+    {
+        id:1,
+        name:"Laptop Stand",
+        stock:18,
+        demand:50,
+        reorderPoint:70,
+        cost:1200
+    },
 
-let state = loadState();
-let map = null;
-let markers = [];
+    {
+        id:2,
+        name:"Wireless Mouse",
+        stock:124,
+        demand:80,
+        reorderPoint:60,
+        cost:650
+    },
 
-function loadState(){
-  try{
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if(saved) return saved;
-  }catch(e){}
-  return JSON.parse(JSON.stringify(defaultState));
-}
-function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
-function nextId(arr){return arr.length ? Math.max(...arr.map(x=>Number(x.id)||0))+1 : 1}
-function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
-function toast(msg){
-  document.querySelectorAll(".toast").forEach(x=>x.remove());
-  const el=document.createElement("div");el.className="toast";el.textContent="✓ "+msg;document.body.appendChild(el);
-  setTimeout(()=>el.remove(),2800);
-}
-function statusOf(item){
-  if(item.stock < item.reorderPoint*0.5) return ["Critical","red"];
-  if(item.stock < item.reorderPoint) return ["Reorder","orange"];
-  if(item.stock > item.demand*2) return ["Overstock","orange"];
-  return ["Healthy","green"];
-}
-function supplierScore(s){return Math.round(s.quality*.40+s.delivery*.35+s.price*.25)}
-function supplierById(id){return state.suppliers.find(s=>Number(s.id)===Number(id))}
-function locationById(id){return state.locations.find(l=>Number(l.id)===Number(id))}
-function showPage(id,el){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(id)?.classList.add("active");
-  document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
-  if(el) el.classList.add("active");
-  if(id==="locations"){setTimeout(initMap,100)}
-  refreshAll();
-  window.scrollTo({top:0,behavior:"smooth"});
+    {
+        id:3,
+        name:"Mechanical Keyboard",
+        stock:15,
+        demand:65,
+        reorderPoint:75,
+        cost:2400
+    },
+
+    {
+        id:4,
+        name:"24-inch Monitor",
+        stock:90,
+        demand:40,
+        reorderPoint:35,
+        cost:11500
+    },
+
+    {
+        id:5,
+        name:"USB-C Hub",
+        stock:62,
+        demand:55,
+        reorderPoint:50,
+        cost:1800
+    },
+
+    {
+        id:6,
+        name:"Webcam",
+        stock:42,
+        demand:48,
+        reorderPoint:55,
+        cost:3200
+    }
+
+];
+
+
+let suppliers = JSON.parse(
+    localStorage.getItem("optiflow_suppliers")
+) || [
+
+    {
+        name:"TechSource Pvt Ltd",
+        quality:95,
+        delivery:91,
+        price:89
+    },
+
+    {
+        name:"Global Components",
+        quality:88,
+        delivery:82,
+        price:83
+    },
+
+    {
+        name:"Metro Supplies",
+        quality:72,
+        delivery:61,
+        price:74
+    }
+
+];
+
+
+let purchaseOrders = JSON.parse(
+    localStorage.getItem("optiflow_pos")
+) || [];
+
+
+let locations = JSON.parse(
+    localStorage.getItem("optiflow_locations")
+) || [
+
+    {
+        name:"Chennai Central Warehouse",
+        city:"Chennai",
+        admin:"Operations Team",
+        lat:13.0827,
+        lng:80.2707
+    },
+
+    {
+        name:"Pondicherry Distribution Center",
+        city:"Puducherry",
+        admin:"Regional Manager",
+        lat:11.9416,
+        lng:79.8083
+    },
+
+    {
+        name:"Bengaluru Hub",
+        city:"Bengaluru",
+        admin:"South Zone Manager",
+        lat:12.9716,
+        lng:77.5946
+    }
+
+];
+
+
+function saveData(){
+
+    localStorage.setItem(
+        "optiflow_inventory",
+        JSON.stringify(inventory)
+    );
+
+    localStorage.setItem(
+        "optiflow_suppliers",
+        JSON.stringify(suppliers)
+    );
+
+    localStorage.setItem(
+        "optiflow_pos",
+        JSON.stringify(purchaseOrders)
+    );
+
+    localStorage.setItem(
+        "optiflow_locations",
+        JSON.stringify(locations)
+    );
+
 }
 
-/* ---------------- INVENTORY ---------------- */
-function addNewProduct(){
-  const product=document.getElementById("newProductName").value.trim();
-  const category=document.getElementById("newProductCategory").value.trim();
-  const stock=Number(document.getElementById("newProductStock").value);
-  const demand=Number(document.getElementById("newProductDemand").value);
-  const reorderPoint=Number(document.getElementById("newProductReorder").value);
-  const unitCost=Number(document.getElementById("newProductCost").value);
-  const locationId=Number(document.getElementById("newProductLocation").value);
-  const supplierId=Number(document.getElementById("newProductSupplier").value);
 
-  if(!product||!category||stock<0||!demand||!reorderPoint||!unitCost||!locationId||!supplierId){
-    alert("Please complete all product fields.");
-    return;
-  }
-  state.inventory.push({id:nextId(state.inventory),product,category,stock,demand,reorderPoint,unitCost,locationId,supplierId});
-  saveState();clearProductForm();refreshAll();
-  toast(product+" added to live inventory");
+function showPage(pageId,element){
+
+    document.querySelectorAll(".page")
+        .forEach(page => page.classList.remove("active"));
+
+    document.getElementById(pageId)
+        .classList.add("active");
+
+
+    document.querySelectorAll(".nav-item")
+        .forEach(item => item.classList.remove("active"));
+
+    if(element){
+        element.classList.add("active");
+    }
+
+
+    const titles = {
+
+        dashboard:"Executive Command Center",
+
+        inventory:"Inventory Intelligence",
+
+        suppliers:"Supplier Management",
+
+        procurement:"Procurement Automation",
+
+        risks:"Risk & Alert Center",
+
+        ai:"AI Decision Support",
+
+        locations:"Stock Locations",
+
+        reports:"Reports & Analytics",
+
+        profile:"Administrator Profile"
+
+    };
+
+
+    document.getElementById("pageTitle")
+        .textContent = titles[pageId] || "OPTIFLOW 360";
+
+
+    renderAll();
+
 }
-function clearProductForm(){
-  ["newProductName","newProductCategory","newProductStock","newProductDemand","newProductReorder","newProductCost"].forEach(id=>document.getElementById(id).value="");
+
+
+function getStatus(item){
+
+    if(item.stock <= item.reorderPoint * .5){
+
+        return "Critical";
+
+    }
+
+    if(item.stock < item.reorderPoint){
+
+        return "Reorder";
+
+    }
+
+    if(item.stock > item.demand * 1.8){
+
+        return "Overstock";
+
+    }
+
+    return "Healthy";
+
 }
-function deleteProduct(id){
-  const p=state.inventory.find(x=>x.id===id);
-  if(!p)return;
-  if(!confirm("Remove "+p.product+" from inventory?"))return;
-  state.inventory=state.inventory.filter(x=>x.id!==id);saveState();refreshAll();toast("Product removed");
+
+
+function getStatusBadge(status){
+
+    if(status==="Critical"){
+
+        return `<span class="badge badge-danger">
+                    Critical
+                </span>`;
+
+    }
+
+    if(status==="Reorder"){
+
+        return `<span class="badge badge-warning">
+                    Reorder
+                </span>`;
+
+    }
+
+    if(status==="Overstock"){
+
+        return `<span class="badge badge-info">
+                    Overstock
+                </span>`;
+
+    }
+
+    return `<span class="badge badge-success">
+                Healthy
+            </span>`;
+
 }
-function filterInventory(){
-  const q=document.getElementById("inventorySearch").value.toLowerCase();
-  document.querySelectorAll("#inventoryBody tr").forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?"":"none");
+
+
+function recommendedQuantity(item){
+
+    let quantity =
+        Math.max(
+            item.demand * 2 - item.stock,
+            item.reorderPoint - item.stock,
+            10
+        );
+
+    return Math.ceil(quantity);
+
 }
+
+
 function renderInventory(){
-  const counts=analyzeInventory();
-  document.getElementById("iTotal").textContent=state.inventory.length;
-  document.getElementById("iLow").textContent=counts.critical+counts.reorder;
-  document.getElementById("iOver").textContent=counts.overstock;
-  const body=document.getElementById("inventoryBody");
-  body.innerHTML="";
-  state.inventory.forEach(item=>{
-    const [status,cls]=statusOf(item), loc=locationById(item.locationId);
-    const tr=document.createElement("tr");
-    tr.innerHTML=`<td><b>${esc(item.product)}</b></td><td>${esc(item.category)}</td><td>${item.stock}</td><td>${item.demand}</td><td>${item.reorderPoint}</td><td>${money(item.unitCost)}</td><td>${loc?esc(loc.name):"—"}</td><td><span class="badge ${cls}">${status}</span></td><td><button class="btn small light" onclick="deleteProduct(${item.id})">Delete</button></td>`;
-    body.appendChild(tr);
-  });
+
+    const table =
+        document.getElementById("inventoryTable");
+
+    table.innerHTML="";
+
+
+    inventory.forEach(item=>{
+
+        const status =
+            getStatus(item);
+
+        const qty =
+            recommendedQuantity(item);
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>
+                <strong>${item.name}</strong>
+            </td>
+
+            <td>${item.stock}</td>
+
+            <td>${item.demand}</td>
+
+            <td>${item.reorderPoint}</td>
+
+            <td>₹${item.cost.toLocaleString("en-IN")}</td>
+
+            <td>
+                ${getStatusBadge(status)}
+            </td>
+
+            <td>${qty}</td>
+
+            <td>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteProduct(${item.id})"
+                >
+                    Delete
+                </button>
+
+            </td>
+
+        `;
+
+
+        table.appendChild(row);
+
+    });
+
 }
+
+
+function addProduct(){
+
+    const name =
+        document.getElementById("productName").value.trim();
+
+    const stock =
+        Number(document.getElementById("productStock").value);
+
+    const demand =
+        Number(document.getElementById("productDemand").value);
+
+    const reorderPoint =
+        Number(document.getElementById("productROP").value);
+
+    const cost =
+        Number(document.getElementById("productCost").value);
+
+
+    if(
+        !name ||
+        stock < 0 ||
+        demand <= 0 ||
+        reorderPoint < 0 ||
+        cost <= 0
+    ){
+
+        alert("Please enter valid product details.");
+
+        return;
+
+    }
+
+
+    inventory.push({
+
+        id:Date.now(),
+
+        name,
+
+        stock,
+
+        demand,
+
+        reorderPoint,
+
+        cost
+
+    });
+
+
+    saveData();
+
+    renderAll();
+
+
+    document.getElementById("productName").value="";
+    document.getElementById("productStock").value="";
+    document.getElementById("productDemand").value="";
+    document.getElementById("productROP").value="";
+    document.getElementById("productCost").value="";
+
+
+    alert(
+        `${name} added successfully to inventory.`
+    );
+
+}
+
+
+function deleteProduct(id){
+
+    if(
+        !confirm(
+            "Are you sure you want to delete this product?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    inventory =
+        inventory.filter(item => item.id !== id);
+
+
+    saveData();
+
+    renderAll();
+
+}
+
+
 function analyzeInventory(){
-  const out={critical:0,reorder:0,overstock:0,healthy:0};
-  state.inventory.forEach(i=>{const s=statusOf(i)[0];out[s.toLowerCase()]++});
-  return out;
-}
-function runInventoryAnalysis(){
-  const c=analyzeInventory();
-  const needs=state.inventory.filter(i=>i.stock<i.reorderPoint);
-  let html=`<div class="grid3">
-    <div><b>${c.critical}</b><div class="small">Critical</div></div>
-    <div><b>${c.reorder}</b><div class="small">Reorder</div></div>
-    <div><b>${c.overstock}</b><div class="small">Overstock</div></div></div>`;
-  if(!needs.length){html+=`<div class="alert green" style="margin-top:14px"><div>✓</div><div><strong>No immediate replenishment required.</strong><p>All products are at or above their reorder point.</p></div></div>`}
-  else{
-    html+=`<div style="margin-top:15px"><b>Replenishment Recommendations</b></div>`;
-    needs.forEach(i=>{
-      const qty=Math.max(10,Math.ceil(i.demand*2-i.stock));
-      html+=`<div class="rec" style="margin-top:10px"><div><h3>${esc(i.product)}</h3><p>Stock ${i.stock} vs reorder point ${i.reorderPoint}. Recommended purchase: <b>${qty} units</b>. Estimated cost: <b>${money(qty*i.unitCost)}</b>.</p></div><span class="badge red">ACTION</span></div>`;
-    });
-  }
-  document.getElementById("inventoryAnalysisResult").innerHTML=html;
-  toast("Inventory analysis completed");
-  refreshDashboard();
+
+    let critical =
+        inventory.filter(
+            item => getStatus(item)==="Critical"
+        );
+
+
+    let reorder =
+        inventory.filter(
+            item => getStatus(item)==="Reorder"
+        );
+
+
+    alert(
+
+        "OPTIFLOW INVENTORY ANALYSIS\n\n" +
+
+        `Critical Items: ${critical.length}\n` +
+
+        `Reorder Items: ${reorder.length}\n\n` +
+
+        "Recommended purchasing quantities have been calculated."
+
+    );
+
 }
 
-/* ---------------- SUPPLIERS ---------------- */
-function recalculateSupplierScores(){
-  const ranked=[...state.suppliers].sort((a,b)=>supplierScore(b)-supplierScore(a));
-  const best=ranked[0];
-  document.getElementById("supplierRecommendation").innerHTML=`<div class="alert green"><div>🏆</div><div><strong>${esc(best.name)} is the current recommended supplier</strong><p>Weighted score: ${supplierScore(best)}%. Quality ${best.quality}%, delivery ${best.delivery}%, price competitiveness ${best.price}%.</p></div></div>`;
-  renderSuppliers();toast("Supplier scores recalculated");
+
+function filterInventory(){
+
+    const search =
+        document.getElementById("inventorySearch")
+            .value
+            .toLowerCase();
+
+
+    document
+        .querySelectorAll("#inventoryTable tr")
+        .forEach(row=>{
+
+            row.style.display =
+                row.innerText
+                    .toLowerCase()
+                    .includes(search)
+                    ? ""
+                    : "none";
+
+        });
+
 }
+
+
+function renderKPIs(){
+
+    const totalValue =
+        inventory.reduce(
+            (sum,item)=>
+                sum + item.stock * item.cost,
+            0
+        );
+
+
+    const critical =
+        inventory.filter(
+            item => getStatus(item)==="Critical"
+        ).length;
+
+
+    document.getElementById("kpiSKUs")
+        .textContent =
+        inventory.length;
+
+
+    document.getElementById("kpiCritical")
+        .textContent =
+        critical;
+
+
+    document.getElementById("kpiValue")
+        .textContent =
+        "₹" +
+        totalValue.toLocaleString("en-IN");
+
+
+    document.getElementById("kpiPO")
+        .textContent =
+        purchaseOrders.length;
+
+}
+
+
+function renderAlerts(){
+
+    const alerts = [];
+
+
+    inventory.forEach(item=>{
+
+        const status =
+            getStatus(item);
+
+
+        if(status==="Critical"){
+
+            alerts.push({
+
+                type:"danger",
+
+                title:"Critical Stock",
+
+                text:
+                    `${item.name} has only ${item.stock} units remaining.`
+
+            });
+
+        }
+
+
+        if(status==="Reorder"){
+
+            alerts.push({
+
+                type:"warning",
+
+                title:"Reorder Recommended",
+
+                text:
+                    `${item.name} is below the reorder point.`
+
+            });
+
+        }
+
+
+        if(status==="Overstock"){
+
+            alerts.push({
+
+                type:"info",
+
+                title:"Overstock Risk",
+
+                text:
+                    `${item.name} has excess inventory.`
+
+            });
+
+        }
+
+    });
+
+
+    const dashboard =
+        document.getElementById("dashboardAlerts");
+
+
+    const riskList =
+        document.getElementById("riskList");
+
+
+    if(alerts.length===0){
+
+        dashboard.innerHTML =
+            `<div class="empty">
+                No active alerts 🎉
+            </div>`;
+
+        riskList.innerHTML =
+            `<div class="empty">
+                Supply chain is currently healthy.
+            </div>`;
+
+        return;
+
+    }
+
+
+    const html =
+        alerts
+            .slice(0,5)
+            .map(a=>`
+
+                <div class="alert">
+
+                    <div>
+                        <strong>
+                            ${a.title}
+                        </strong>
+
+                        <span>
+                            ${a.text}
+                        </span>
+                    </div>
+
+                </div>
+
+            `)
+            .join("");
+
+
+    dashboard.innerHTML=html;
+
+    riskList.innerHTML =
+        alerts.map(a=>`
+
+            <div class="alert">
+
+                <div>
+
+                    <strong>
+                        ${a.title}
+                    </strong>
+
+                    <span>
+                        ${a.text}
+                    </span>
+
+                </div>
+
+            </div>
+
+        `).join("");
+
+}
+
+
+function scanRisks(){
+
+    renderAlerts();
+
+    alert(
+        "Risk scan completed. OPTIFLOW has updated the Alert Center."
+    );
+
+}
+
+
+function renderHealth(){
+
+    const container =
+        document.getElementById("healthBars");
+
+
+    const total =
+        inventory.length || 1;
+
+
+    const statuses = {
+
+        Healthy:
+            inventory.filter(
+                x=>getStatus(x)==="Healthy"
+            ).length,
+
+        Reorder:
+            inventory.filter(
+                x=>getStatus(x)==="Reorder"
+            ).length,
+
+        Critical:
+            inventory.filter(
+                x=>getStatus(x)==="Critical"
+            ).length,
+
+        Overstock:
+            inventory.filter(
+                x=>getStatus(x)==="Overstock"
+            ).length
+
+    };
+
+
+    container.innerHTML =
+        Object.entries(statuses)
+        .map(([name,count])=>`
+
+            <div style="margin-bottom:15px">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    margin-bottom:5px;
+                ">
+
+                    <strong>${name}</strong>
+
+                    <span>${count}</span>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        style="width:${count/total*100}%"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        `)
+        .join("");
+
+}
+
+
+function askAI(){
+
+    const question =
+        document.getElementById("aiQuestion")
+            .value
+            .toLowerCase();
+
+
+    let answer="";
+
+
+    if(
+        question.includes("urgent") ||
+        question.includes("critical")
+    ){
+
+        const critical =
+            inventory.filter(
+                item=>getStatus(item)==="Critical"
+            );
+
+
+        if(critical.length===0){
+
+            answer =
+                "There are currently no critical stock items.";
+
+        }else{
+
+            answer =
+                "Urgent attention is required for:\n\n" +
+
+                critical.map(
+                    item =>
+                    `• ${item.name}: ${item.stock} units`
+                ).join("\n");
+
+        }
+
+    }
+
+    else if(
+        question.includes("reorder") ||
+        question.includes("purchase")
+    ){
+
+        const reorder =
+            inventory.filter(
+                item =>
+                    getStatus(item)==="Critical" ||
+                    getStatus(item)==="Reorder"
+            );
+
+
+        if(reorder.length===0){
+
+            answer =
+                "No immediate purchase is recommended.";
+
+        }else{
+
+            answer =
+                "Recommended procurement:\n\n" +
+
+                reorder.map(item => {
+
+                    const qty =
+                        recommendedQuantity(item);
+
+                    return `• ${item.name}: ${qty} units`;
+
+                }).join("\n");
+
+        }
+
+    }
+
+    else if(
+        question.includes("value") ||
+        question.includes("inventory")
+    ){
+
+        const value =
+            inventory.reduce(
+                (sum,item)=>
+                    sum + item.stock * item.cost,
+                0
+            );
+
+
+        answer =
+            `Current inventory value is ₹${value.toLocaleString("en-IN")}.`;
+
+    }
+
+    else{
+
+        answer =
+            "OPTIFLOW AI analyzed your current supply chain data.\n\n" +
+
+            "You can ask questions such as:\n" +
+
+            "• Which products need urgent reorder?\n" +
+
+            "• What should I purchase?\n" +
+
+            "• What is my inventory value?";
+
+    }
+
+
+    document.getElementById("aiAnswer")
+        .textContent = answer;
+
+}
+
+
+function fullAIAnalysis(){
+
+    const result =
+        document.getElementById("fullAIResult");
+
+
+    const critical =
+        inventory.filter(
+            x=>getStatus(x)==="Critical"
+        );
+
+
+    const reorder =
+        inventory.filter(
+            x=>getStatus(x)==="Reorder"
+        );
+
+
+    const overstock =
+        inventory.filter(
+            x=>getStatus(x)==="Overstock"
+        );
+
+
+    let recommendation =
+        "";
+
+
+    if(critical.length){
+
+        recommendation +=
+            `🚨 PRIORITY ACTION\n` +
+
+            `Immediately replenish ${critical.length} critical item(s).\n\n`;
+
+    }
+
+
+    if(reorder.length){
+
+        recommendation +=
+            `🛒 PROCUREMENT ACTION\n` +
+
+            `Generate purchase requests for ${reorder.length} reorder item(s).\n\n`;
+
+    }
+
+
+    if(overstock.length){
+
+        recommendation +=
+            `📦 WORKING CAPITAL ACTION\n` +
+
+            `${overstock.length} item(s) show overstock risk. Consider reducing future purchase quantities.\n\n`;
+
+    }
+
+
+    if(!recommendation){
+
+        recommendation =
+            "✅ Current inventory is within healthy operating ranges.";
+
+    }
+
+
+    result.textContent =
+        recommendation;
+
+
+    document.getElementById("demandRiskText")
+        .textContent =
+        critical.length
+        ? `${critical.length} high-risk products`
+        : "Low";
+
+
+    document.getElementById("stockRiskText")
+        .textContent =
+        reorder.length + critical.length
+        ? `${reorder.length + critical.length} items require attention`
+        : "Low";
+
+
+    document.getElementById("procurementOpportunity")
+        .textContent =
+        reorder.length
+        ? `${reorder.length} purchase opportunities`
+        : "No immediate opportunity";
+
+}
+
+
+function calculateSupplierScores(){
+
+    renderSuppliers();
+
+    alert(
+        "Supplier scores recalculated using Quality 40%, Delivery 35%, Price 25%."
+    );
+
+}
+
+
 function renderSuppliers(){
-  const cards=document.getElementById("supplierCards");cards.innerHTML="";
-  state.suppliers.forEach(s=>{
-    const score=supplierScore(s);
-    const cls=score>=85?"green":score>=75?"blue":"orange";
-    cards.innerHTML+=`<div class="panel"><div class="panel-head"><h2>${esc(s.name)}</h2><span class="badge ${cls}">${score}%</span></div>
-      <div class="score-row"><div class="score-top"><span>Overall Score</span><b>${score}%</b></div><div class="progress"><span style="width:${score}%"></span></div></div>
-      <div class="score-row"><div class="score-top"><span>Quality</span><b>${s.quality}%</b></div><div class="progress"><span style="width:${s.quality}%"></span></div></div>
-      <div class="score-row"><div class="score-top"><span>On-Time Delivery</span><b>${s.delivery}%</b></div><div class="progress"><span style="width:${s.delivery}%"></span></div></div>
-      <div class="score-row"><div class="score-top"><span>Price Competitiveness</span><b>${s.price}%</b></div><div class="progress"><span style="width:${s.price}%"></span></div></div>
-      <div class="small">Lead time: ${s.lead} days · Orders: ${s.orders}</div></div>`;
-  });
-  const body=document.getElementById("supplierBody");body.innerHTML="";
-  state.suppliers.forEach(s=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${esc(s.name)}</td><td>${s.orders}</td><td>${s.delivery}%</td><td>${s.quality}%</td><td>${s.price}%</td><td>${s.lead} days</td><td><span class="badge ${supplierScore(s)>=85?"green":supplierScore(s)>=75?"blue":"orange"}">${supplierScore(s)}</span></td><td><button class="btn small light" onclick="deleteSupplier(${s.id})">Delete</button></td>`;
-    body.appendChild(tr);
-  });
-}
-function openSupplierModal(){document.getElementById("supplierModal").classList.add("show")}
-function saveSupplier(){
-  const name=document.getElementById("sName").value.trim(),quality=Number(document.getElementById("sQuality").value),delivery=Number(document.getElementById("sDelivery").value),price=Number(document.getElementById("sPrice").value),lead=Number(document.getElementById("sLead").value),orders=Number(document.getElementById("sOrders").value);
-  if(!name||[quality,delivery,price,lead,orders].some(v=>Number.isNaN(v))){alert("Complete supplier fields.");return}
-  state.suppliers.push({id:nextId(state.suppliers),name,quality,delivery,price,lead,orders});saveState();closeModal("supplierModal");refreshAll();toast(name+" added");
-}
-function deleteSupplier(id){
-  if(state.inventory.some(i=>i.supplierId===id)){alert("This supplier is linked to inventory. Reassign products before deleting.");return}
-  state.suppliers=state.suppliers.filter(s=>s.id!==id);saveState();refreshAll();
+
+    const container =
+        document.getElementById("supplierCards");
+
+
+    container.innerHTML =
+        suppliers.map((supplier,index)=>{
+
+            const score =
+                Math.round(
+                    supplier.quality*.40 +
+                    supplier.delivery*.35 +
+                    supplier.price*.25
+                );
+
+
+            return `
+
+                <div class="card">
+
+                    <h3>
+                        ${supplier.name}
+                    </h3>
+
+                    <br>
+
+                    <p>
+                        Quality: ${supplier.quality}
+                    </p>
+
+                    <p>
+                        Delivery: ${supplier.delivery}
+                    </p>
+
+                    <p>
+                        Price: ${supplier.price}
+                    </p>
+
+                    <br>
+
+                    <h2>
+                        ${score}/100
+                    </h2>
+
+                    <small>
+                        Weighted supplier score
+                    </small>
+
+                    <br><br>
+
+                    <button
+                        class="btn btn-danger"
+                        onclick="deleteSupplier(${index})"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+
+            `;
+
+        }).join("");
+
 }
 
-/* ---------------- PROCUREMENT ---------------- */
-function runProcurementAnalysis(){
-  const best=[...state.suppliers].sort((a,b)=>supplierScore(b)-supplierScore(a))[0];
-  const needs=state.inventory.filter(i=>i.stock<i.reorderPoint);
-  let added=0;
-  needs.forEach(i=>{
-    const existing=state.procurement.find(p=>p.productId===i.id&&p.status==="Pending");
-    if(existing)return;
-    const qty=Math.max(10,Math.ceil(i.demand*2-i.stock));
-    const cost=qty*i.unitCost;
-    state.procurement.push({id:nextId(state.procurement),productId:i.id,product:i.product,quantity:qty,cost,supplierId:best?best.id:null,status:"Pending",created:new Date().toLocaleString("en-IN")});
-    state.activity.unshift({time:new Date().toLocaleString("en-IN"),text:"Purchase request generated for "+i.product});
-    added++;
-  });
-  saveState();refreshAll();toast(added?added+" procurement request(s) generated":"No new procurement requests needed");
-}
-function approveProcurement(id){
-  const p=state.procurement.find(x=>x.id===id);if(!p)return;
-  p.status="Approved";p.approvedAt=new Date().toLocaleString("en-IN");
-  const item=state.inventory.find(i=>i.id===p.productId);
-  if(item)item.stock+=p.quantity;
-  state.activity.unshift({time:p.approvedAt,text:"Purchase approved: "+p.product+" · "+p.quantity+" units"});
-  saveState();refreshAll();toast(p.product+" purchase approved");
-}
-function rejectProcurement(id){
-  const p=state.procurement.find(x=>x.id===id);if(!p)return;
-  p.status="Rejected";p.rejectedAt=new Date().toLocaleString("en-IN");
-  state.activity.unshift({time:p.rejectedAt,text:"Purchase rejected: "+p.product});
-  saveState();refreshAll();toast("Purchase request rejected");
-}
-function renderProcurement(){
-  const pending=state.procurement.filter(p=>p.status==="Pending"),approved=state.procurement.filter(p=>p.status==="Approved");
-  document.getElementById("pPending").textContent=pending.length;
-  document.getElementById("pApproved").textContent=approved.length;
-  document.getElementById("pSpend").textContent=money(pending.reduce((a,p)=>a+p.cost,0));
-  const savings=Math.round(pending.reduce((a,p)=>a+p.cost,0)*.08);
-  document.getElementById("pSavings").textContent=money(savings);
-  const list=document.getElementById("procurementList");list.innerHTML="";
-  if(!state.procurement.length){list.innerHTML=`<div class="empty">Run Procurement Analysis to generate purchase requests.</div>`}
-  state.procurement.slice().reverse().forEach(p=>{
-    const s=supplierById(p.supplierId);
-    const cls=p.status==="Approved"?"green":p.status==="Rejected"?"red":"orange";
-    list.innerHTML+=`<div class="rec"><div><h3>${esc(p.product)} — Purchase ${p.quantity} units</h3><p>Supplier: <b>${s?esc(s.name):"Unassigned"}</b> · Estimated cost: <b>${money(p.cost)}</b> · Created: ${p.created}</p></div><div class="priority"><span class="badge ${cls}">${p.status}</span>${p.status==="Pending"?`<div class="action-row"><button class="btn small green" onclick="approveProcurement(${p.id})">Approve</button><button class="btn small red" onclick="rejectProcurement(${p.id})">Reject</button></div>`:""}</div></div>`;
-  });
-  document.getElementById("procurementTimeline").innerHTML=state.activity.slice(0,8).map(a=>`<div class="timeline-item"><strong>${esc(a.text)}</strong><p>${a.time}</p></div>`).join("")||`<div class="empty">No workflow activity yet.</div>`;
-}
 
-/* ---------------- RISK ---------------- */
-function runRiskScan(){
-  const risks=[];
-  state.inventory.forEach(i=>{
-    const [status]=statusOf(i);
-    const supplier=supplierById(i.supplierId);
-    if(status==="Critical") risks.push({level:"Critical",icon:"🔴",title:"High Stockout Risk — "+i.product,text:`Current stock ${i.stock}; demand ${i.demand}/month. Reorder point ${i.reorderPoint}.`});
-    else if(status==="Reorder") risks.push({level:"Medium",icon:"🟠",title:"Reorder Required — "+i.product,text:`Stock ${i.stock} is below reorder point ${i.reorderPoint}.`});
-    else if(status==="Overstock") risks.push({level:"Medium",icon:"📦",title:"Excess Inventory — "+i.product,text:`Stock is ${i.stock}, more than 2× monthly demand ${i.demand}.`});
-    if(supplier&&supplier.delivery<70) risks.push({level:"Critical",icon:"🚚",title:"Supplier Delivery Risk — "+supplier.name,text:`On-time delivery is only ${supplier.delivery}% for ${i.product}.`});
-  });
-  renderRisks(risks);toast("Risk scan completed");
-}
-function renderRisks(risks=null){
-  if(risks===null){
-    risks=[];
-    state.inventory.forEach(i=>{
-      const [status]=statusOf(i),s=supplierById(i.supplierId);
-      if(status==="Critical")risks.push({level:"Critical",icon:"🔴",title:"High Stockout Risk — "+i.product,text:`Stock ${i.stock} vs demand ${i.demand}.`});
-      else if(status==="Reorder")risks.push({level:"Medium",icon:"🟠",title:"Reorder Required — "+i.product,text:`Stock ${i.stock} is below reorder point ${i.reorderPoint}.`});
-      else if(status==="Overstock")risks.push({level:"Medium",icon:"📦",title:"Excess Inventory — "+i.product,text:`Stock ${i.stock} vs demand ${i.demand}.`});
-      if(s&&s.delivery<70)risks.push({level:"Critical",icon:"🚚",title:"Supplier Delivery Risk — "+s.name,text:`On-time delivery ${s.delivery}%.`});
+function addSupplier(){
+
+    const name =
+        document.getElementById("supplierName")
+            .value.trim();
+
+
+    const quality =
+        Number(
+            document.getElementById("supplierQuality")
+                .value
+        );
+
+
+    const delivery =
+        Number(
+            document.getElementById("supplierDelivery")
+                .value
+        );
+
+
+    const price =
+        Number(
+            document.getElementById("supplierPrice")
+                .value
+        );
+
+
+    if(
+        !name ||
+        quality<0 ||
+        delivery<0 ||
+        price<0
+    ){
+
+        alert("Enter valid supplier information.");
+
+        return;
+
+    }
+
+
+    suppliers.push({
+
+        name,
+
+        quality,
+
+        delivery,
+
+        price
+
     });
-  }
-  const critical=risks.filter(r=>r.level==="Critical").length,medium=risks.filter(r=>r.level==="Medium").length;
-  document.getElementById("rCritical").textContent=critical;document.getElementById("rMedium").textContent=medium;document.getElementById("rResolved").textContent=state.resolvedRisks;
-  document.getElementById("riskList").innerHTML=risks.length?risks.map(r=>`<div class="alert ${r.level==="Critical"?"red":""}"><div>${r.icon}</div><div><strong>${esc(r.title)}</strong><p>${esc(r.text)}</p></div></div>`).join(""):`<div class="alert green"><div>✓</div><div><strong>No active inventory risks detected</strong><p>Current inventory is within configured thresholds.</p></div></div>`;
+
+
+    saveData();
+
+    renderSuppliers();
+
+
+    document.getElementById("supplierName").value="";
+    document.getElementById("supplierQuality").value="";
+    document.getElementById("supplierDelivery").value="";
+    document.getElementById("supplierPrice").value="";
+
 }
 
-/* ---------------- AI ---------------- */
-function generateAI(){
-  if(!state.inventory.length){return}
-  const ranked=state.inventory.map(i=>({...i,risk:i.demand/Math.max(i.stock,1)})).sort((a,b)=>b.risk-a.risk);
-  const item=ranked[0];
-  const supplier=[...state.suppliers].sort((a,b)=>supplierScore(b)-supplierScore(a))[0];
-  const qty=Math.max(10,Math.ceil(item.demand*2-item.stock)),cost=qty*item.unitCost;
-  const score=supplier?supplierScore(supplier):0;
-  const reason=item.stock<item.reorderPoint?"stock is below reorder point":"demand-to-stock ratio is high";
-  document.getElementById("aiMainResult").innerHTML=`<strong>Priority: ${esc(item.product)}</strong><p style="margin-top:8px">Recommend purchasing <span>${qty} units</span> from <span>${supplier?esc(supplier.name):"approved supplier"}</span>.</p><p style="margin-top:6px">Estimated spend: <span>${money(cost)}</span> · Supplier score: <span>${score}%</span>.</p><p style="margin-top:6px">Reason: ${reason}.</p>`;
-  document.getElementById("aiInventory").innerHTML=`<b>${esc(item.product)}</b><br>Stock ${item.stock} · Demand ${item.demand}/month · Reorder ${item.reorderPoint}<br><br><span class="badge red">HIGH PRIORITY</span>`;
-  document.getElementById("aiSupplier").innerHTML=`<b>${supplier?esc(supplier.name):"None"}</b><br>Weighted score ${score}%<br>Quality ${supplier?.quality||0}% · Delivery ${supplier?.delivery||0}% · Price ${supplier?.price||0}%`;
-  document.getElementById("aiCost").innerHTML=`Purchase ${qty} units × ${money(item.unitCost)}<br><br><b>${money(cost)}</b> estimated procurement spend`;
-  document.getElementById("dashboardAIText").textContent=`The highest-risk item is ${item.product}. The engine recommends replenishment using current stock, demand and supplier score.`;
-  document.getElementById("dashboardAIBox").innerHTML=`<strong>Purchase ${qty} ${esc(item.product)} units</strong><p style="margin-top:7px">Suggested supplier: <span>${supplier?esc(supplier.name):"—"}</span></p><p style="margin-top:5px">Estimated cost: <span>${money(cost)}</span></p>`;
-  toast("AI decision generated");
+
+function deleteSupplier(index){
+
+    if(
+        confirm("Delete this supplier?")
+    ){
+
+        suppliers.splice(index,1);
+
+        saveData();
+
+        renderSuppliers();
+
+    }
+
 }
 
-/* ---------------- LOCATIONS / MAP ---------------- */
-function populateLocationSelects(){
-  const l=document.getElementById("newProductLocation"),s=document.getElementById("newProductSupplier");
-  l.innerHTML=state.locations.map(x=>`<option value="${x.id}">${esc(x.name)} — ${esc(x.city)}</option>`).join("");
-  s.innerHTML=state.suppliers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");
+
+function generatePOs(){
+
+    const candidates =
+        inventory.filter(
+            item =>
+                getStatus(item)==="Critical" ||
+                getStatus(item)==="Reorder"
+        );
+
+
+    if(candidates.length===0){
+
+        alert(
+            "No purchase requests are required right now."
+        );
+
+        return;
+
+    }
+
+
+    candidates.forEach(item=>{
+
+        const exists =
+            purchaseOrders.some(
+                po =>
+                    po.productId===item.id &&
+                    po.status!=="Rejected" &&
+                    po.status!=="Ordered"
+            );
+
+
+        if(!exists){
+
+            const qty =
+                recommendedQuantity(item);
+
+
+            purchaseOrders.push({
+
+                id:"PO-" +
+                    Date.now() +
+                    "-" +
+                    Math.floor(Math.random()*1000),
+
+                productId:item.id,
+
+                product:item.name,
+
+                quantity:qty,
+
+                unitCost:item.cost,
+
+                total:qty*item.cost,
+
+                status:"Pending",
+
+                created:new Date().toLocaleString()
+
+            });
+
+        }
+
+    });
+
+
+    saveData();
+
+    renderAll();
+
+
+    alert(
+        "Purchase requests generated successfully."
+    );
+
 }
-function initMap(){
-  if(typeof L==="undefined")return;
-  if(!map){
-    map=L.map("map").setView([13.0827,80.2707],6);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"}).addTo(map);
-  }
-  markers.forEach(m=>m.remove());markers=[];
-  state.locations.forEach(loc=>{
-    const inv=state.inventory.filter(i=>i.locationId===loc.id);
-    const units=inv.reduce((a,i)=>a+i.stock,0),value=inv.reduce((a,i)=>a+i.stock*i.unitCost,0);
-    const marker=L.marker([loc.lat,loc.lng]).addTo(map).bindPopup(`<b>${esc(loc.name)}</b><br>Admin: ${esc(loc.admin)}<br>City: ${esc(loc.city)}<br>SKUs: ${inv.length}<br>Units: ${units}<br>Inventory value: ${money(value)}`);
-    markers.push(marker);
-  });
-  fitAllLocations();
+
+
+function renderPOs(){
+
+    const container =
+        document.getElementById("poList");
+
+
+    if(purchaseOrders.length===0){
+
+        container.innerHTML =
+            `<div class="empty">
+                No purchase orders created yet.
+            </div>`;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        purchaseOrders.map(po=>`
+
+            <div class="card po-card">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    gap:15px;
+                    flex-wrap:wrap;
+                ">
+
+                    <div>
+
+                        <h3>
+                            ${po.product}
+                        </h3>
+
+                        <p>
+                            PO ID: ${po.id}
+                        </p>
+
+                        <p>
+                            Quantity: ${po.quantity}
+                        </p>
+
+                        <p>
+                            Total: ₹${po.total.toLocaleString("en-IN")}
+                        </p>
+
+                        <p>
+                            Created: ${po.created}
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <span class="badge ${
+                            po.status==="Pending"
+                            ?"badge-warning"
+                            :
+                            po.status==="Approved"
+                            ?"badge-info"
+                            :
+                            po.status==="Ordered"
+                            ?"badge-success"
+                            :
+                            "badge-danger"
+                        }">
+
+                            ${po.status}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="po-actions">
+
+                    ${
+                        po.status==="Pending"
+
+                        ?
+
+                        `
+
+                        <button
+                            class="btn btn-success"
+                            onclick="approvePO('${po.id}')"
+                        >
+                            Approve
+                        </button>
+
+                        <button
+                            class="btn btn-danger"
+                            onclick="rejectPO('${po.id}')"
+                        >
+                            Reject
+                        </button>
+
+                        `
+
+                        :
+
+                        po.status==="Approved"
+
+                        ?
+
+                        `
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="orderPO('${po.id}')"
+                        >
+                            Place Order
+                        </button>
+
+                        `
+
+                        :
+
+                        ""
+
+                    }
+
+                </div>
+
+            </div>
+
+        `).join("");
+
 }
-function fitAllLocations(){
-  if(!map||!state.locations.length)return;
-  const bounds=L.latLngBounds(state.locations.map(x=>[x.lat,x.lng]));
-  map.fitBounds(bounds,{padding:[25,25]});
+
+
+function approvePO(id){
+
+    const po =
+        purchaseOrders.find(
+            x=>x.id===id
+        );
+
+
+    if(po){
+
+        po.status="Approved";
+
+        saveData();
+
+        renderAll();
+
+    }
+
 }
+
+
+function rejectPO(id){
+
+    const po =
+        purchaseOrders.find(
+            x=>x.id===id
+        );
+
+
+    if(po){
+
+        po.status="Rejected";
+
+        saveData();
+
+        renderAll();
+
+    }
+
+}
+
+
+function orderPO(id){
+
+    const po =
+        purchaseOrders.find(
+            x=>x.id===id
+        );
+
+
+    if(po){
+
+        po.status="Ordered";
+
+        saveData();
+
+        renderAll();
+
+        alert(
+            `Purchase order ${id} has been placed.`
+        );
+
+    }
+
+}
+
+
+function addLocation(){
+
+    const name =
+        document.getElementById("locationName")
+            .value.trim();
+
+
+    const city =
+        document.getElementById("locationCity")
+            .value.trim();
+
+
+    const admin =
+        document.getElementById("locationAdmin")
+            .value.trim();
+
+
+    const lat =
+        Number(
+            document.getElementById("locationLat")
+                .value
+        );
+
+
+    const lng =
+        Number(
+            document.getElementById("locationLng")
+                .value
+        );
+
+
+    if(
+        !name ||
+        !city ||
+        !admin ||
+        isNaN(lat) ||
+        isNaN(lng)
+    ){
+
+        alert(
+            "Please enter complete location information."
+        );
+
+        return;
+
+    }
+
+
+    locations.push({
+
+        name,
+
+        city,
+
+        admin,
+
+        lat,
+
+        lng
+
+    });
+
+
+    saveData();
+
+    renderLocations();
+
+
+    document.getElementById("locationName").value="";
+    document.getElementById("locationCity").value="";
+    document.getElementById("locationAdmin").value="";
+    document.getElementById("locationLat").value="";
+    document.getElementById("locationLng").value="";
+
+
+    alert(
+        `${name} added successfully.`
+    );
+
+}
+
+
 function renderLocations(){
-  document.getElementById("locationList").innerHTML=state.locations.map(l=>{
-    const inv=state.inventory.filter(i=>i.locationId===l.id),units=inv.reduce((a,i)=>a+i.stock,0);
-    return `<div class="location-card"><div><strong>📍 ${esc(l.name)}</strong><p>${esc(l.city)} · Admin: ${esc(l.admin)} · ${inv.length} SKUs · ${units} units</p></div><button class="btn small light" onclick="focusLocation(${l.id})">View</button></div>`;
-  }).join("");
-  document.getElementById("locationSummary").innerHTML=state.locations.map(l=>{
-    const inv=state.inventory.filter(i=>i.locationId===l.id),units=inv.reduce((a,i)=>a+i.stock,0),value=inv.reduce((a,i)=>a+i.stock*i.unitCost,0);
-    return `<tr><td>${esc(l.name)}</td><td>${esc(l.admin)}</td><td>${esc(l.city)}</td><td>${inv.length}</td><td>${units}</td><td>${money(value)}</td></tr>`;
-  }).join("");
-}
-function focusLocation(id){
-  const l=locationById(id);if(!l)return;
-  showPage("locations",document.querySelectorAll(".nav")[6]);
-  setTimeout(()=>{if(map){map.setView([l.lat,l.lng],13);markers.find(m=>m.getLatLng().lat===l.lat&&m.getLatLng().lng===l.lng)?.openPopup()}},120);
-}
-function openLocationModal(){document.getElementById("locationModal").classList.add("show")}
-function saveLocation(){
-  const name=document.getElementById("lName").value.trim(),admin=document.getElementById("lAdmin").value.trim(),city=document.getElementById("lCity").value.trim(),lat=Number(document.getElementById("lLat").value),lng=Number(document.getElementById("lLng").value);
-  if(!name||!admin||!city||!Number.isFinite(lat)||!Number.isFinite(lng)){alert("Complete location fields.");return}
-  state.locations.push({id:nextId(state.locations),name,admin,city,lat,lng});saveState();closeModal("locationModal");refreshAll();setTimeout(initMap,100);toast(name+" added to network");
+
+    const container =
+        document.getElementById("locationList");
+
+
+    if(locations.length===0){
+
+        container.innerHTML =
+            `<div class="empty">
+                No locations added.
+            </div>`;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        locations.map((location,index)=>`
+
+            <div class="card location-card">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    gap:15px;
+                ">
+
+                    <div>
+
+                        <h3>
+                            📍 ${location.name}
+                        </h3>
+
+                        <p>
+                            City: ${location.city}
+                        </p>
+
+                        <p>
+                            Administrator: ${location.admin}
+                        </p>
+
+                        <p>
+                            Coordinates:
+                            ${location.lat},
+                            ${location.lng}
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="btn btn-danger"
+                        onclick="deleteLocation(${index})"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+
+            </div>
+
+        `).join("");
+
 }
 
-/* ---------------- REPORTS / DASHBOARD ---------------- */
-function refreshDashboard(){
-  const value=state.inventory.reduce((a,i)=>a+i.stock*i.unitCost,0),counts=analyzeInventory();
-  document.getElementById("kInventoryValue").textContent=money(value);
-  document.getElementById("kProducts").textContent=state.inventory.length;
-  document.getElementById("kLow").textContent=counts.critical+counts.reorder;
-  const avg=state.suppliers.length?Math.round(state.suppliers.reduce((a,s)=>a+supplierScore(s),0)/state.suppliers.length):0;
-  document.getElementById("kSupplier").textContent=avg+"%";
-  document.getElementById("alertCount").textContent=(counts.critical+counts.reorder)+" Active";
-  document.getElementById("dashboardInventory").innerHTML=state.inventory.slice(0,7).map(i=>{const [st,cl]=statusOf(i);return `<tr><td>${esc(i.product)}</td><td>${i.stock}</td><td>${i.demand}</td><td><span class="badge ${cl}">${st}</span></td></tr>`}).join("");
-  const risks=state.inventory.filter(i=>statusOf(i)[0]!=="Healthy").slice(0,4);
-  document.getElementById("dashboardAlerts").innerHTML=risks.length?risks.map(i=>{const [st,cl]=statusOf(i);return `<div class="alert ${cl==="red"?"red":""}"><div>${cl==="red"?"🔴":"🟠"}</div><div><strong>${st} — ${esc(i.product)}</strong><p>Stock ${i.stock} vs reorder ${i.reorderPoint}.</p></div></div>`}).join(""):`<div class="alert green"><div>✓</div><div><strong>No immediate inventory alert</strong><p>All current products are healthy.</p></div></div>`;
-  renderChart("spendChart",[4.2,5.5,4.8,6.9,6.2,8.4],["Apr","May","Jun","Jul","Aug","Sep"]);
-}
-function renderChart(id,values,labels){
-  const el=document.getElementById(id);if(!el)return;const max=Math.max(...values,1);
-  el.innerHTML=values.map((v,i)=>`<div class="bar" style="height:${Math.max(12,v/max*88)}%"><b>${v}L</b><span>${labels[i]}</span></div>`).join("");
-}
-function refreshReport(){
-  renderChart("reportChart",[4.2,5.5,4.8,6.9,6.2,8.4],["Apr","May","Jun","Jul","Aug","Sep"]);
-  const c=analyzeInventory(),avg=state.suppliers.length?Math.round(state.suppliers.reduce((a,s)=>a+supplierScore(s),0)/state.suppliers.length):0;
-  document.getElementById("reportKPIs").innerHTML=`<div class="score-row"><div class="score-top"><span>Inventory Accuracy</span><b>96.8%</b></div><div class="progress"><span style="width:96.8%"></span></div></div><div class="score-row"><div class="score-top"><span>Supplier Reliability</span><b>${avg}%</b></div><div class="progress"><span style="width:${avg}%"></span></div></div><div class="score-row"><div class="score-top"><span>Low Stock Resolution</span><b>${c.critical+c.reorder?Math.max(20,100-(c.critical+c.reorder)*8):100}%</b></div><div class="progress"><span style="width:${c.critical+c.reorder?Math.max(20,100-(c.critical+c.reorder)*8):100}%"></span></div></div>`;
-}
-function generateReport(){
-  const c=analyzeInventory(),value=state.inventory.reduce((a,i)=>a+i.stock*i.unitCost,0),pending=state.procurement.filter(p=>p.status==="Pending").length;
-  document.getElementById("reportSummary").innerHTML=`<div class="grid3"><div><b>${money(value)}</b><div class="small">Current inventory value</div></div><div><b>${c.critical+c.reorder}</b><div class="small">Low-stock products</div></div><div><b>${pending}</b><div class="small">Pending purchase requests</div></div></div><div class="alert green" style="margin-top:15px"><div>📊</div><div><strong>Executive interpretation</strong><p>OPTIFLOW 360 analyzed ${state.inventory.length} products across ${state.locations.length} locations. The current workflow contains inventory monitoring, supplier evaluation, procurement approval, risk detection and explainable AI recommendations.</p></div></div>`;
-  toast("Executive report generated");
+
+function deleteLocation(index){
+
+    if(
+        confirm("Delete this location?")
+    ){
+
+        locations.splice(index,1);
+
+        saveData();
+
+        renderLocations();
+
+    }
+
 }
 
-/* ---------------- ADMIN ---------------- */
-function openAdminModal(){
-  const a=state.admin;document.getElementById("adminName").value=a.name;document.getElementById("adminShop").value=a.shop;document.getElementById("adminEmail").value=a.email;document.getElementById("adminPhone").value=a.phone;
-  document.getElementById("adminModal").classList.add("show");
-}
-function saveAdmin(){
-  state.admin={name:document.getElementById("adminName").value.trim()||"Administrator",shop:document.getElementById("adminShop").value.trim()||"OPTIFLOW Store",email:document.getElementById("adminEmail").value.trim(),phone:document.getElementById("adminPhone").value.trim()};
-  saveState();document.getElementById("topAvatar").textContent=state.admin.name.split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase();closeModal("adminModal");toast("Admin profile saved");
+
+function refreshReports(){
+
+    renderReports();
+
+    alert(
+        "Analytics refreshed successfully."
+    );
+
 }
 
-/* ---------------- DEMO / UTILS ---------------- */
-function seedDemo(){
-  state=JSON.parse(JSON.stringify(defaultState));saveState();refreshAll();toast("Demo scenario loaded");
+
+function renderReports(){
+
+    const totalValue =
+        inventory.reduce(
+            (sum,item)=>
+                sum + item.stock*item.cost,
+            0
+        );
+
+
+    const average =
+        inventory.length
+        ?
+        Math.round(
+            inventory.reduce(
+                (sum,item)=>sum+item.stock,
+                0
+            ) /
+            inventory.length
+        )
+        :
+        0;
+
+
+    const critical =
+        inventory.filter(
+            item=>getStatus(item)==="Critical"
+        ).length;
+
+
+    document.getElementById("reportValue")
+        .textContent =
+        "₹" +
+        totalValue.toLocaleString("en-IN");
+
+
+    document.getElementById("reportAverage")
+        .textContent =
+        average;
+
+
+    document.getElementById("reportCritical")
+        .textContent =
+        critical;
+
+
+    const chart =
+        document.getElementById("inventoryChart");
+
+
+    const maxStock =
+        Math.max(
+            ...inventory.map(x=>x.stock),
+            1
+        );
+
+
+    chart.innerHTML =
+        inventory.map(item=>`
+
+            <div
+                class="bar"
+                style="
+                    height:${Math.max(
+                        8,
+                        item.stock/maxStock*90
+                    )}%;
+                "
+                title="${item.name}: ${item.stock}"
+            >
+
+                <span>
+                    ${item.name.substring(0,8)}
+                </span>
+
+            </div>
+
+        `).join("");
+
+
+    const distribution =
+        document.getElementById("stockDistribution");
+
+
+    const statuses = {
+
+        Healthy:inventory.filter(
+            x=>getStatus(x)==="Healthy"
+        ).length,
+
+        Reorder:inventory.filter(
+            x=>getStatus(x)==="Reorder"
+        ).length,
+
+        Critical:inventory.filter(
+            x=>getStatus(x)==="Critical"
+        ).length,
+
+        Overstock:inventory.filter(
+            x=>getStatus(x)==="Overstock"
+        ).length
+
+    };
+
+
+    distribution.innerHTML =
+        Object.entries(statuses)
+        .map(([status,count])=>`
+
+            <div style="margin-bottom:18px">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    margin-bottom:6px;
+                ">
+
+                    <strong>
+                        ${status}
+                    </strong>
+
+                    <span>
+                        ${count}
+                    </span>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        style="
+                            width:${
+                                inventory.length
+                                ? count/inventory.length*100
+                                : 0
+                            }%;
+                        "
+                    ></div>
+
+                </div>
+
+            </div>
+
+        `)
+        .join("");
+
 }
-function closeModal(id){document.getElementById(id).classList.remove("show")}
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function refreshAll(){
-  populateLocationSelects();renderInventory();renderSuppliers();renderProcurement();renderRisks();refreshDashboard();refreshReport();renderLocations();
-  document.getElementById("topAvatar").textContent=state.admin.name.split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase();
+
+
+function saveProfile(){
+
+    const name =
+        document.getElementById("profileName")
+            .value.trim();
+
+
+    if(name){
+
+        localStorage.setItem(
+            "optiflow_admin_name",
+            name
+        );
+
+
+        document.querySelector(".profile strong")
+            .textContent = name;
+
+
+        alert(
+            "Profile saved successfully."
+        );
+
+    }
+
 }
-document.addEventListener("DOMContentLoaded",()=>{
-  refreshAll();
-  document.querySelectorAll(".modal-backdrop").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("show")}));
-});
+
+
+function toggleDarkMode(){
+
+    document.body.classList.toggle("dark");
+
+
+    localStorage.setItem(
+        "optiflow_dark",
+        document.body.classList.contains("dark")
+    );
+
+}
+
+
+function renderAll(){
+
+    renderInventory();
+
+    renderKPIs();
+
+    renderAlerts();
+
+    renderHealth();
+
+    renderSuppliers();
+
+    renderPOs();
+
+    renderLocations();
+
+    renderReports();
+
+    fullAIAnalysis();
+
+}
+
+
+if(
+    localStorage.getItem("optiflow_dark")==="true"
+){
+
+    document.body.classList.add("dark");
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    renderAll
+);
+
 </script>
+
 </body>
 </html>
